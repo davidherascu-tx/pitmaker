@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { ChevronDown, Flame, Truck, Warehouse, Menu, X, ArrowRight, Phone, Info, ShoppingBag } from "lucide-react";
+import { ChevronDown, Flame, Truck, Warehouse, Menu, X, ArrowRight, Phone, Info, ShoppingBag, ExternalLink } from "lucide-react";
 
 // --- Types ---
 interface SubItem {
@@ -11,6 +11,7 @@ interface SubItem {
   href: string;
   badge?: string;
   image?: string;
+  external?: boolean;
 }
 
 interface MenuSection {
@@ -137,7 +138,7 @@ const NAV_DATA: NavItemData[] = [
         title: "Company",
         items: [
           { name: "About Us", href: "/about" },
-          { name: "Spices / Accessories Store", href: "/store" },
+          { name: "Spices / Accessories Store", href: "https://pitmaker.mybigcommerce.com/", external: true },
         ]
       }
     ]
@@ -154,12 +155,28 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  
+  // --- Scroll Visibility State ---
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      setScrolled(currentScrollY > 20);
+      setLastScrollY(currentScrollY);
+    };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   useEffect(() => {
     if (!activeMenu) {
@@ -185,36 +202,38 @@ export default function Navbar() {
       <style jsx global>{`
         @keyframes white-flash {
           0% { border-color: rgba(255, 255, 255, 0); }
-          50% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+          50% { border-color: rgba(255, 255, 255, 0.5); box-shadow: 0 0 40px rgba(255,255,255,0.1); }
           100% { border-color: rgba(255, 255, 255, 0.1); }
         }
         .animate-flash {
-          animation: white-flash 1s ease-out 1 forwards;
+          animation: white-flash 1.2s ease-out 1 forwards;
         }
       `}</style>
 
       {/* --- NAVBAR CONTAINER --- */}
       <nav 
-        className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out
+        className={`fixed left-1/2 -translate-x-1/2 z-50 
+        transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
         ${scrolled 
-           ? "top-2 w-[95%] max-w-[1600px]" // Scrolled position
-           : "top-8 w-[95%] max-w-[1600px]" // Top position
+           ? "top-2 w-[95%] max-w-[1600px]" 
+           : "top-8 w-[95%] max-w-[1600px]" 
         }
+        ${!isVisible ? '-translate-y-[200%] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}
+        xl:translate-y-0 xl:opacity-100 xl:pointer-events-auto
         `}
         onMouseLeave={() => setActiveMenu(null)}
       >
         <div className={`
-           relative flex items-center justify-between px-4 lg:px-8 transition-all duration-500 rounded-2xl
+           relative flex items-center justify-between px-4 lg:px-8 
+           transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] rounded-2xl
            ${scrolled 
-             // SCROLLED: 80% Dark Obsidian (Much better visibility than 30%)
-             ? "h-20 bg-[#050505]/80 backdrop-blur-xl border border-white/10 animate-flash shadow-2xl" 
-             // TOP: Transparent
+             ? "h-20 bg-[#050505]/80 backdrop-blur-2xl animate-flash shadow-2xl" 
              : "h-24 bg-transparent border-transparent" 
            } 
         `}>
           
           {/* --- LOGO --- */}
-          <Link href="/" className={`relative z-50 flex-shrink-0 group transition-all duration-500 ${scrolled ? 'w-36 h-9' : 'w-48 h-12'}`}>
+          <Link href="/" className={`relative z-50 flex-shrink-0 group transition-all duration-[800ms] ${scrolled ? 'w-36 h-9' : 'w-48 h-12'}`}>
             <div className="relative w-full h-full">
                 <Image 
                     src="/pitmaker_black_logo.webp" 
@@ -226,9 +245,11 @@ export default function Navbar() {
           </Link>
 
           {/* --- DESKTOP NAV LINKS --- */}
-          {/* Glass Dock: Visible only when NOT scrolled */}
-          <div className={`hidden xl:flex items-center gap-1 h-12 px-2 rounded-full transition-all duration-500
-             ${!scrolled ? "bg-white/5 border border-white/5 backdrop-blur-md shadow-lg" : ""}
+          <div className={`hidden xl:flex items-center gap-1 h-12 px-2 rounded-full transition-all duration-[800ms]
+             ${!scrolled 
+                ? "bg-white/5 border border-white/5 backdrop-blur-md shadow-lg" 
+                : "bg-transparent border-transparent shadow-none" 
+             }
           `}>
             {NAV_DATA.map((item) => (
               <div 
@@ -245,7 +266,7 @@ export default function Navbar() {
                   {item.type === 'link' ? (
                     <Link 
                       href={item.href || '#'}
-                      className="block px-6 py-2.5 font-bold uppercase tracking-[0.15em] text-sm text-zinc-200 hover:text-white transition-all relative group"
+                      className="block px-6 py-2.5 font-bold uppercase tracking-[0.15em] text-sm text-zinc-200 hover:text-white transition-all duration-300 relative group"
                     >
                       {item.label}
                       <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#15F128] transition-all duration-300 group-hover:w-1/2 shadow-[0_0_8px_#15F128]" />
@@ -257,22 +278,34 @@ export default function Navbar() {
                       `}
                     >
                       {item.label}
-                      <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${activeMenu === item.id ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-3 h-3 transition-transform duration-500 ${activeMenu === item.id ? 'rotate-180' : ''}`} />
                     </button>
                   )}
 
-                {/* Dropdown for "More" - Removed Green Border */}
+                {/* Dropdown for "More" */}
                 {item.type === 'dropdown' && (
                   <div 
-                     className={`absolute top-full pt-6 left-0 w-60 transition-all duration-300
-                     ${activeMenu === item.id ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}
+                     className={`absolute top-full pt-6 left-0 w-96 transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)]
+                     ${activeMenu === item.id ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-2 invisible'}
                      `}
                   >
                      <div className="bg-[#050505] border border-zinc-800 rounded-xl shadow-2xl p-2">
                        {item.sections?.[0].items.map((subItem, idx) => (
-                          <Link key={idx} href={subItem.href} className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-900 group/drop">
-                             {idx === 0 ? <Info size={16} className="text-zinc-500 group-hover/drop:text-[#15F128]" /> : <ShoppingBag size={16} className="text-zinc-500 group-hover/drop:text-[#15F128]" />}
-                             <span className="text-zinc-300 text-sm font-bold uppercase tracking-wide group-hover/drop:text-white">{subItem.name}</span>
+                          <Link 
+                            key={idx} 
+                            href={subItem.href} 
+                            target={subItem.external ? "_blank" : undefined}
+                            rel={subItem.external ? "noopener noreferrer" : undefined}
+                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-900 group/drop"
+                          >
+                             {/* Icons size 22 */}
+                             {idx === 0 ? <Info size={22} className="text-zinc-500 group-hover/drop:text-[#15F128]" /> : <ShoppingBag size={22} className="text-zinc-500 group-hover/drop:text-[#15F128]" />}
+                             
+                             {/* UPDATED: "More" font decreased to text-sm */}
+                             <span className="flex items-center text-zinc-300 text-sm font-bold uppercase tracking-wide group-hover/drop:text-white whitespace-nowrap">
+                                {subItem.name}
+                                {subItem.external && <ExternalLink size={14} className="ml-2 opacity-50 group-hover/drop:opacity-100 group-hover/drop:text-[#15F128]" />}
+                             </span>
                           </Link>
                        ))}
                      </div>
@@ -289,14 +322,14 @@ export default function Navbar() {
                   <Phone size={10} />
                   <span className="text-[9px] uppercase font-black tracking-widest">Order Line</span>
                </div>
-               <span className={`font-oswald text-white leading-none tracking-wide group-hover:text-white transition-colors drop-shadow-md ${scrolled ? 'text-sm' : 'text-lg'}`}>
+               <span className={`font-oswald text-white leading-none tracking-wide group-hover:text-white transition-colors drop-shadow-md duration-[800ms] ${scrolled ? 'text-sm' : 'text-lg'}`}>
                  (281) 359-7487
                </span>
             </div>
 
             <Link 
               href="/contact" 
-              className={`group relative overflow-hidden bg-[#15F128] text-black rounded-lg font-black uppercase text-xs tracking-widest transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(21,241,40,0.6)] z-50
+              className={`group relative overflow-hidden bg-[#15F128] text-black rounded-lg font-black uppercase text-xs tracking-widest transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(21,241,40,0.6)] z-50
               ${scrolled ? 'px-5 py-2' : 'px-7 py-3'}
               `}
             >
@@ -318,8 +351,8 @@ export default function Navbar() {
       
         {/* --- DESKTOP MEGA MENU OVERLAY --- */}
         <div 
-          className={`absolute top-full left-0 w-full pt-6 transition-all duration-300 ease-in-out origin-top hidden xl:block
-          ${activeMenu && activeData?.type === 'mega' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}
+          className={`absolute top-full left-0 w-full pt-6 transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)] hidden xl:block
+          ${activeMenu && activeData?.type === 'mega' ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-2 invisible'}
           `}
           onMouseLeave={() => setActiveMenu(null)}
         >
@@ -329,7 +362,7 @@ export default function Navbar() {
                   
                   {/* Links */}
                   <div className="w-[60%] p-10 bg-[#050505]">
-                     <div className="animate-in fade-in slide-in-from-left-4 duration-300">
+                     <div className="animate-in fade-in slide-in-from-left-4 duration-500">
                         <div className="flex items-center gap-3 mb-8">
                            {activeData.icon && <activeData.icon className="text-[#15F128]" size={24} />}
                            <h3 className="text-3xl font-oswald font-bold text-white uppercase tracking-tight">{activeData.label}</h3>
@@ -338,7 +371,7 @@ export default function Navbar() {
                         <div className="grid grid-cols-2 gap-x-12 gap-y-10">
                           {activeData.sections?.map((section, idx) => (
                             <div key={idx}>
-                              <h4 className="text-[#15F128] text-[10px] font-black uppercase tracking-widest mb-4 border-b border-zinc-800 pb-2 inline-block">
+                              <h4 className="text-[#15F128] text-xs font-black uppercase tracking-widest mb-4 border-b border-zinc-800 pb-2 inline-block">
                                 {section.title}
                               </h4>
                               <div className="space-y-3">
@@ -358,11 +391,12 @@ export default function Navbar() {
                                     }}
                                     className="group flex items-center justify-between hover:translate-x-1 transition-transform border-l border-transparent hover:border-[#15F128] pl-0 hover:pl-3"
                                   >
-                                    <span className="text-zinc-400 text-xs font-bold uppercase tracking-wide group-hover:text-white transition-colors">
+                                    {/* UPDATED: Mega Menu Font Increased to text-base */}
+                                    <span className="text-zinc-400 text-base font-bold uppercase tracking-wide group-hover:text-white transition-colors">
                                       {item.name}
                                     </span>
                                     {item.badge && (
-                                      <span className="text-[8px] font-black bg-zinc-800 text-white px-1.5 py-0.5 rounded uppercase ml-2 group-hover:bg-[#15F128] group-hover:text-black transition-colors">
+                                      <span className="text-[10px] font-black bg-zinc-800 text-white px-1.5 py-0.5 rounded uppercase ml-2 group-hover:bg-[#15F128] group-hover:text-black transition-colors">
                                         {item.badge}
                                       </span>
                                     )}
@@ -380,7 +414,7 @@ export default function Navbar() {
                      <div className={`absolute inset-0 bg-gradient-to-br ${activeData.imageColor} to-black opacity-50 z-10`} />
                      
                      {currentImage ? (
-                        <div className="absolute inset-0 transition-all duration-500 ease-in-out transform scale-105 group-hover/image:scale-100">
+                        <div className="absolute inset-0 transition-all duration-700 ease-in-out transform scale-105 group-hover/image:scale-100">
                            <Image 
                               src={currentImage} 
                               alt="Preview" 
