@@ -1,208 +1,516 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
-import { ChevronDown, Flame, Truck, Warehouse, Phone, Menu, X, ArrowRight, Star } from "lucide-react";
+import { ChevronDown, Flame, Truck, Warehouse, Menu, X, ArrowRight, Phone, Info, ShoppingBag } from "lucide-react";
 
 // --- Types ---
 interface SubItem {
   name: string;
   href: string;
-  desc: string;
+  badge?: string;
+  image?: string;
 }
 
-interface Category {
+interface MenuSection {
   title: string;
-  icon: React.ElementType;
   items: SubItem[];
 }
 
-// --- Data ---
-const productCategories: Category[] = [
+interface NavItemData {
+  id: string;
+  label: string;
+  href?: string;
+  type: "link" | "mega" | "dropdown";
+  icon?: React.ElementType;
+  description?: string;
+  defaultImage?: string;
+  imageColor?: string;
+  categoryBadge?: string;
+  sections?: MenuSection[];
+}
+
+// --- DATA CONFIGURATION ---
+const NAV_DATA: NavItemData[] = [
+  { id: "home", label: "Home", href: "/", type: "link" },
   {
-    title: "Trailers",
+    id: "trailers",
+    label: "Trailers",
+    type: "mega",
     icon: Truck,
-    items: [
-      { name: "Competition Rigs", href: "/trailers/competition", desc: "Podium-winning designs." },
-      { name: "Commercial Porch", href: "/trailers/commercial", desc: "Full mobile kitchens." },
-      { name: "Tailgater Series", href: "/trailers/tailgater", desc: "Compact & Towable." },
-    ],
+    description: "Custom built mobile pits ranging from single axle to massive commercial rigs.",
+    defaultImage: "/trailers.webp", 
+    imageColor: "from-blue-900/60",
+    categoryBadge: "Texas Heat on Wheels",
+    sections: [
+      {
+        title: "Single Axle",
+        items: [
+          { name: "SGT Vault Trailer", href: "/trailers/sgt-vault", image: "/images/SGT_Vault_Trailer.webp" }, 
+          { name: "SGT Sniper Trailer", href: "/trailers/sgt-sniper", image: "/images/SGT_Sniper_Trailer.webp" },
+          { name: "LT Trailer w/ BBQ Vault", href: "/trailers/lt-vault", image: "/images/LT_Trailer_BBQ_Vault.webp" },
+          { name: "LT Trailer w/ Sniper", href: "/trailers/lt-sniper", image: "/images/LT_Trailer_Sniper.webp" },
+        ]
+      },
+      {
+        title: "Custom",
+        items: [
+          { name: "CPT Custom BBQ Trailer", href: "/trailers/cpt-custom", badge: "Flagship", image: "/images/CPT_BBQ_Trailer.webp" },
+          { name: "CPT Trailer - Roof & Awnings", href: "/trailers/cpt-roof", image: "/images/Custom_Trailer_Roof.webp" },
+          { name: "Walk-On Trailer", href: "/trailers/walk-on", image: "/images/Dodge-City.webp" },
+          { name: "Custom Built", href: "/trailers/custom", image: "/images/Diet-Mt-Dew.webp" },
+        ]
+      }
+    ]
   },
   {
-    title: "Smokers",
+    id: "smokers",
+    label: "Smokers",
+    type: "mega",
     icon: Flame,
-    items: [
-      { name: "Vault Smokers", href: "/smokers/vault", desc: "Vertical insulated precision." },
-      { name: "Offset Smokers", href: "/smokers/offset", desc: "Classic stick burners." },
-      { name: "Cabinet Style", href: "/smokers/cabinet", desc: "High capacity footprint." },
-    ],
+    description: "The ultimate arsenal of handcrafted insulated smokers.",
+    defaultImage: "/smokers.webp",
+    imageColor: "from-orange-900/60",
+    categoryBadge: "Built for the Perfect Smoke",
+    sections: [
+      {
+        title: "Sniper Series",
+        items: [
+          { name: "Short Sniper", href: "/smokers/short-sniper", image: "/images/smoker_short_sniper.webp" },
+          { name: "Long Rifle Sniper", href: "/smokers/long-rifle", image: "/images/smoker_long_rifle_sniper.webp" },
+          { name: "Magnum Sniper", href: "/smokers/magnum", image: "/images/smoker_magnum_sniper.webp" },
+        ]
+      },
+      {
+        title: "Safe Series",
+        items: [
+          { name: "Safe w/ Wheels", href: "/smokers/safe-wheels", image: "/images/smokers_safe_w_wheels.webp" },
+          { name: "Safe w/ Cart", href: "/smokers/safe-cart", image: "/images/smoker_safe_w_cart.webp" },
+          { name: "Safe/Grill-Meister Combo", href: "/smokers/safe-combo", badge: "Combo", image: "/images/smoker_safe_grill.webp" },
+        ]
+      },
+      {
+        title: "Core Models",
+        items: [
+          { name: "Vault", href: "/smokers/vault", badge: "Iconic", image: "/images/smoker_vault.webp" },
+          { name: "Revolver", href: "/smokers/revolver", image: "/images/smoker_revolver.webp" },
+          { name: "Hitman", href: "/smokers/hitman", image: "/images/smoker_hitman.webp" },
+          { name: "Edge", href: "/smokers/edge", image: "/images/smoker_edge.webp" },
+          { name: "PM AR-20 Pellet", href: "/smokers/pellet", image: "/images/smoker_pellet.webp" },
+        ]
+      }
+    ]
   },
   {
-    title: "Grills",
+    id: "grills",
+    label: "Grills",
+    type: "mega",
     icon: Warehouse,
-    items: [
-      { name: "Hitman Series", href: "/grills/hitman", desc: "Adjustable charcoal beds." },
-      { name: "Santa Maria", href: "/grills/santa-maria", desc: "Open fire experience." },
-      { name: "Built-In Units", href: "/grills/built-in", desc: "Outdoor kitchen ready." },
-    ],
+    description: "Heavy-duty charcoal grilling systems for the perfect sear.",
+    defaultImage: "/grills.webp",
+    imageColor: "from-red-900/60",
+    categoryBadge: "The Art of the Grill",
+    sections: [
+      {
+        title: "Grill-Meister Series",
+        items: [
+          { name: "30\" Grill-Meister", href: "/grills/30-meister", image: "/images/grill_30_grill_meister.webp" },
+          { name: "48\" Grill-Meister", href: "/grills/48-meister", badge: "XL", image: "/images/grill_48_grill_meister.webp" },
+        ]
+      },
+      {
+        title: "Performance",
+        items: [
+          { name: "MVP Tailgate Grill", href: "/grills/mvp", image: "/images/grill_mvp_tailgate.webp" },
+          { name: "Carbon-Q", href: "/grills/carbon-q", image: "/images/grill_carbon_q.webp" },
+        ]
+      }
+    ]
   },
+  {
+    id: "more",
+    label: "More",
+    type: "dropdown",
+    sections: [
+      {
+        title: "Company",
+        items: [
+          { name: "About Us", href: "/about" },
+          { name: "Spices / Accessories Store", href: "/store" },
+        ]
+      }
+    ]
+  },
+  { id: "contact", label: "Contact", href: "/contact", type: "link" },
 ];
 
 export default function Navbar() {
-  const [isMegaOpen, setIsMegaOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [hoveredProductImage, setHoveredProductImage] = useState<string | null>(null);
+  const [hoveredTitle, setHoveredTitle] = useState<string | null>(null);
+  const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
-  // Effect to shrink the navbar slightly when scrolling
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!activeMenu) {
+      setHoveredProductImage(null);
+      setHoveredTitle(null);
+      setHoveredSection(null);
+    }
+  }, [activeMenu]);
+
+  const activeData = NAV_DATA.find((item) => item.id === activeMenu);
+  const currentImage = hoveredProductImage || activeData?.defaultImage;
+  const currentTitle = hoveredTitle || activeData?.label;
+  const currentBadge = hoveredSection && activeData 
+    ? `${activeData.label} / ${hoveredSection}` 
+    : activeData?.categoryBadge || "Pitmaker Certified";
+
+  const toggleMobileAccordion = (id: string) => {
+    setExpandedMobileItem(expandedMobileItem === id ? null : id);
+  };
+
   return (
     <>
-      {/* The Navbar Container 
-        - Fixed position
-        - Centered with translate-x
-        - Width adjusts based on scroll state
-      */}
+      <style jsx global>{`
+        @keyframes white-flash {
+          0% { border-color: rgba(255, 255, 255, 0); }
+          50% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+          100% { border-color: rgba(255, 255, 255, 0.1); }
+        }
+        .animate-flash {
+          animation: white-flash 1s ease-out 1 forwards;
+        }
+      `}</style>
+
+      {/* --- NAVBAR CONTAINER --- */}
       <nav 
-        className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out
-        ${scrolled ? "top-2 w-[95%] max-w-6xl" : "top-6 w-[95%] max-w-7xl"}
+        className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-in-out
+        ${scrolled 
+           ? "top-2 w-[95%] max-w-[1600px]" // Scrolled position
+           : "top-8 w-[95%] max-w-[1600px]" // Top position
+        }
         `}
+        onMouseLeave={() => setActiveMenu(null)}
       >
-        <div className="relative bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl px-6 h-16 md:h-20 flex items-center justify-between">
+        <div className={`
+           relative flex items-center justify-between px-4 lg:px-8 transition-all duration-500 rounded-2xl
+           ${scrolled 
+             // SCROLLED: 80% Dark Obsidian (Much better visibility than 30%)
+             ? "h-20 bg-[#050505]/80 backdrop-blur-xl border border-white/10 animate-flash shadow-2xl" 
+             // TOP: Transparent
+             : "h-24 bg-transparent border-transparent" 
+           } 
+        `}>
           
           {/* --- LOGO --- */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-orange-600 text-white p-1.5 rounded-full group-hover:scale-110 transition-transform">
-                <Flame size={20} fill="currentColor" />
-            </div>
-            <div className="font-oswald font-bold text-xl md:text-2xl tracking-tighter uppercase text-white">
-              PIT<span className="text-orange-500">MAKER</span>
+          <Link href="/" className={`relative z-50 flex-shrink-0 group transition-all duration-500 ${scrolled ? 'w-36 h-9' : 'w-48 h-12'}`}>
+            <div className="relative w-full h-full">
+                <Image 
+                    src="/pitmaker_black_logo.webp" 
+                    alt="Pitmaker" 
+                    fill
+                    className="object-contain brightness-0 invert drop-shadow-md"
+                />
             </div>
           </Link>
 
-          {/* --- DESKTOP NAV --- */}
-          <div className="hidden lg:flex items-center gap-1">
-            
-            {/* Standard Links */}
-            <Link href="/" className="px-5 py-2 text-sm font-medium text-zinc-300 hover:text-white transition-colors">Home</Link>
-            
-            {/* Mega Menu Trigger */}
-            <div 
-              className="px-5 py-2 cursor-pointer h-full flex items-center"
-              onMouseEnter={() => setIsMegaOpen(true)}
-              onMouseLeave={() => setIsMegaOpen(false)}
-            >
-              <button className={`flex items-center gap-1 text-sm font-medium transition-colors ${isMegaOpen ? 'text-orange-500' : 'text-zinc-300 hover:text-white'}`}>
-                Products <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isMegaOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {/* --- FLOATING MEGA MENU --- */}
+          {/* --- DESKTOP NAV LINKS --- */}
+          {/* Glass Dock: Visible only when NOT scrolled */}
+          <div className={`hidden xl:flex items-center gap-1 h-12 px-2 rounded-full transition-all duration-500
+             ${!scrolled ? "bg-white/5 border border-white/5 backdrop-blur-md shadow-lg" : ""}
+          `}>
+            {NAV_DATA.map((item) => (
               <div 
-                className={`absolute top-[110%] left-0 w-full bg-zinc-900/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl transition-all duration-300 transform origin-top
-                ${isMegaOpen ? 'opacity-100 visible translate-y-0 scale-100' : 'opacity-0 invisible -translate-y-4 scale-95'}
-                `}
+                key={item.id} 
+                className="relative h-full flex items-center"
+                onMouseEnter={() => {
+                  if (item.type === 'link') {
+                    setActiveMenu(null);
+                  } else {
+                    setActiveMenu(item.id);
+                  }
+                }}
               >
-                <div className="grid grid-cols-4 gap-8">
-                  {/* Map Categories */}
-                  {productCategories.map((cat, idx) => (
-                    <div key={idx} className="space-y-4">
-                      <div className="flex items-center gap-2 text-orange-500 mb-2">
-                        <cat.icon size={18} />
-                        <h4 className="font-oswald uppercase text-lg tracking-wide text-white">{cat.title}</h4>
-                      </div>
-                      <ul className="space-y-3">
-                        {cat.items.map((item, i) => (
-                          <li key={i}>
-                            <Link href={item.href} className="group/link block">
-                              <span className="text-zinc-300 text-sm font-bold group-hover/link:text-white transition-colors block">
-                                {item.name}
-                              </span>
-                              <span className="text-zinc-600 text-xs group-hover/link:text-zinc-500 transition-colors">
-                                {item.desc}
-                              </span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                  {item.type === 'link' ? (
+                    <Link 
+                      href={item.href || '#'}
+                      className="block px-6 py-2.5 font-bold uppercase tracking-[0.15em] text-sm text-zinc-200 hover:text-white transition-all relative group"
+                    >
+                      {item.label}
+                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#15F128] transition-all duration-300 group-hover:w-1/2 shadow-[0_0_8px_#15F128]" />
+                    </Link>
+                  ) : (
+                    <button 
+                      className={`flex items-center gap-2 px-6 py-2.5 font-bold uppercase tracking-[0.15em] text-sm transition-all duration-300
+                      ${activeMenu === item.id ? 'text-[#15F128] drop-shadow-[0_0_8px_rgba(21,241,40,0.8)]' : 'text-zinc-200 hover:text-white'}
+                      `}
+                    >
+                      {item.label}
+                      <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${activeMenu === item.id ? 'rotate-180' : ''}`} />
+                    </button>
+                  )}
 
-                  {/* Promo Column */}
-                  <div className="bg-gradient-to-br from-orange-600 to-orange-800 rounded-2xl p-6 flex flex-col justify-between text-white relative overflow-hidden group/card">
-                     <Star className="absolute -right-6 -top-6 w-32 h-32 text-orange-500/30 rotate-12 group-hover/card:rotate-45 transition-transform duration-700" fill="currentColor" />
-                     <div>
-                       <h4 className="font-oswald text-xl uppercase font-bold relative z-10">Custom Shop</h4>
-                       <p className="text-orange-100 text-xs mt-2 relative z-10">Don't see what you need? We engineer custom solutions.</p>
+                {/* Dropdown for "More" - Removed Green Border */}
+                {item.type === 'dropdown' && (
+                  <div 
+                     className={`absolute top-full pt-6 left-0 w-60 transition-all duration-300
+                     ${activeMenu === item.id ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}
+                     `}
+                  >
+                     <div className="bg-[#050505] border border-zinc-800 rounded-xl shadow-2xl p-2">
+                       {item.sections?.[0].items.map((subItem, idx) => (
+                          <Link key={idx} href={subItem.href} className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-900 group/drop">
+                             {idx === 0 ? <Info size={16} className="text-zinc-500 group-hover/drop:text-[#15F128]" /> : <ShoppingBag size={16} className="text-zinc-500 group-hover/drop:text-[#15F128]" />}
+                             <span className="text-zinc-300 text-sm font-bold uppercase tracking-wide group-hover/drop:text-white">{subItem.name}</span>
+                          </Link>
+                       ))}
                      </div>
-                     <Link href="/custom" className="inline-flex items-center gap-2 text-sm font-bold mt-4 hover:gap-3 transition-all relative z-10">
-                        Start Build <ArrowRight size={16} />
-                     </Link>
                   </div>
-                </div>
+                )}
               </div>
-            </div>
-
-            <Link href="/about" className="px-5 py-2 text-sm font-medium text-zinc-300 hover:text-white transition-colors">Our Craft</Link>
+            ))}
           </div>
 
-          {/* --- ACTION BUTTONS --- */}
-          <div className="hidden lg:flex items-center gap-4">
-            <div className="text-right hidden xl:block">
-               <span className="block text-[10px] uppercase text-zinc-500 font-bold tracking-wider">Order Line</span>
-               <span className="block text-white text-sm font-oswald tracking-wide hover:text-orange-500 cursor-pointer transition-colors">281.359.7487</span>
+          {/* --- RIGHT ACTION BUTTONS --- */}
+          <div className="hidden lg:flex items-center gap-8">
+            <div className="flex flex-col items-end group cursor-pointer">
+               <div className="flex items-center gap-2 text-zinc-500 group-hover:text-[#15F128] transition-colors drop-shadow-md">
+                  <Phone size={10} />
+                  <span className="text-[9px] uppercase font-black tracking-widest">Order Line</span>
+               </div>
+               <span className={`font-oswald text-white leading-none tracking-wide group-hover:text-white transition-colors drop-shadow-md ${scrolled ? 'text-sm' : 'text-lg'}`}>
+                 (281) 359-7487
+               </span>
             </div>
+
             <Link 
               href="/contact" 
-              className="bg-white text-zinc-950 px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wide hover:bg-orange-600 hover:text-white transition-all shadow-lg hover:shadow-orange-600/20"
+              className={`group relative overflow-hidden bg-[#15F128] text-black rounded-lg font-black uppercase text-xs tracking-widest transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(21,241,40,0.6)] z-50
+              ${scrolled ? 'px-5 py-2' : 'px-7 py-3'}
+              `}
             >
-              Get Quote
+              <span className="relative z-10 flex items-center gap-2">
+                Get Quote <ArrowRight className="w-4 h-4" />
+              </span>
+              <div className="absolute inset-0 bg-white/40 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
             </Link>
           </div>
 
           {/* --- MOBILE TOGGLE --- */}
           <button 
+            className="xl:hidden text-white hover:text-[#15F128] transition-colors p-2"
             onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="lg:hidden text-zinc-300 hover:text-white"
+            aria-label="Toggle Menu"
           >
-            {isMobileOpen ? <X /> : <Menu />}
+            {isMobileOpen ? <X size={32} /> : <Menu size={32} />}
           </button>
-        </div>
-
-        {/* --- MOBILE MENU OVERLAY --- */}
-        <div className={`
-          absolute top-[120%] left-0 w-full bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 origin-top
-          ${isMobileOpen ? 'max-h-[80vh] opacity-100 visible' : 'max-h-0 opacity-0 invisible'}
-        `}>
-           <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
-              {productCategories.map((cat, idx) => (
-                <div key={idx} className="border-b border-zinc-800 pb-4 last:border-0">
-                  <div className="flex items-center gap-2 text-orange-500 mb-3">
-                    <cat.icon size={18} />
-                    <h4 className="font-oswald uppercase text-lg text-white">{cat.title}</h4>
+      
+        {/* --- DESKTOP MEGA MENU OVERLAY --- */}
+        <div 
+          className={`absolute top-full left-0 w-full pt-6 transition-all duration-300 ease-in-out origin-top hidden xl:block
+          ${activeMenu && activeData?.type === 'mega' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}
+          `}
+          onMouseLeave={() => setActiveMenu(null)}
+        >
+           <div className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden">
+             {activeData && activeData.type === 'mega' && (
+               <div className="flex min-h-[400px]">
+                  
+                  {/* Links */}
+                  <div className="w-[60%] p-10 bg-[#050505]">
+                     <div className="animate-in fade-in slide-in-from-left-4 duration-300">
+                        <div className="flex items-center gap-3 mb-8">
+                           {activeData.icon && <activeData.icon className="text-[#15F128]" size={24} />}
+                           <h3 className="text-3xl font-oswald font-bold text-white uppercase tracking-tight">{activeData.label}</h3>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-x-12 gap-y-10">
+                          {activeData.sections?.map((section, idx) => (
+                            <div key={idx}>
+                              <h4 className="text-[#15F128] text-[10px] font-black uppercase tracking-widest mb-4 border-b border-zinc-800 pb-2 inline-block">
+                                {section.title}
+                              </h4>
+                              <div className="space-y-3">
+                                {section.items.map((item, itemIdx) => (
+                                  <Link 
+                                    key={itemIdx} 
+                                    href={item.href}
+                                    onMouseEnter={() => {
+                                      setHoveredProductImage(item.image || null);
+                                      setHoveredTitle(item.name);
+                                      setHoveredSection(section.title);
+                                    }}
+                                    onMouseLeave={() => {
+                                      setHoveredProductImage(null);
+                                      setHoveredTitle(null);
+                                      setHoveredSection(null);
+                                    }}
+                                    className="group flex items-center justify-between hover:translate-x-1 transition-transform border-l border-transparent hover:border-[#15F128] pl-0 hover:pl-3"
+                                  >
+                                    <span className="text-zinc-400 text-xs font-bold uppercase tracking-wide group-hover:text-white transition-colors">
+                                      {item.name}
+                                    </span>
+                                    {item.badge && (
+                                      <span className="text-[8px] font-black bg-zinc-800 text-white px-1.5 py-0.5 rounded uppercase ml-2 group-hover:bg-[#15F128] group-hover:text-black transition-colors">
+                                        {item.badge}
+                                      </span>
+                                    )}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                     </div>
                   </div>
-                  <ul className="space-y-3 pl-4 border-l-2 border-zinc-800">
-                    {cat.items.map((item, i) => (
-                      <li key={i}>
-                        <Link href={item.href} className="block text-zinc-400 hover:text-white py-1 text-sm">
-                          {item.name}
+
+                  {/* Preview */}
+                  <div className="w-[40%] relative overflow-hidden flex flex-col justify-end border-l border-zinc-900 group/image">
+                     <div className={`absolute inset-0 bg-gradient-to-br ${activeData.imageColor} to-black opacity-50 z-10`} />
+                     
+                     {currentImage ? (
+                        <div className="absolute inset-0 transition-all duration-500 ease-in-out transform scale-105 group-hover/image:scale-100">
+                           <Image 
+                              src={currentImage} 
+                              alt="Preview" 
+                              fill 
+                              className="object-cover opacity-60 mix-blend-overlay"
+                           />
+                        </div>
+                     ) : (
+                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                     )}
+                     
+                     <div className="relative z-20 p-10">
+                        <div className="inline-flex items-center gap-2 border border-[#15F128]/30 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full mb-4">
+                           <span className="text-[10px] text-[#15F128] uppercase font-bold tracking-widest">
+                              {currentBadge}
+                           </span>
+                        </div>
+                        
+                        <h2 className="text-4xl font-oswald font-black text-white uppercase leading-none mb-4 transition-all duration-300">
+                          {currentTitle}
+                        </h2>
+                        
+                        <Link href="/gallery" className="text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-[#15F128] transition-colors flex items-center gap-2">
+                           View Full Specs <ArrowRight className="w-3 h-3" />
                         </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-              <div className="pt-4">
-                <Link href="/contact" className="block w-full text-center bg-orange-600 text-white py-3 rounded-xl font-bold uppercase tracking-wide">
-                  Get a Quote
-                </Link>
-              </div>
+                     </div>
+                  </div>
+               </div>
+             )}
            </div>
         </div>
+        </div>
       </nav>
+
+      {/* --- MOBILE MENU (UNCHANGED) --- */}
+      <div 
+        className={`fixed inset-0 z-[60] bg-zinc-950 transition-all duration-500 xl:hidden overflow-y-auto
+        ${isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}
+        `}
+      >
+           <div className="sticky top-0 w-full flex justify-between items-center p-6 border-b border-zinc-900 bg-zinc-950 z-50">
+              <div className="relative w-48 h-12">
+                 <Image 
+                    src="/pitmaker_black_logo.webp" 
+                    alt="Pitmaker" 
+                    fill
+                    className="object-contain brightness-0 invert"
+                 />
+              </div>
+              <button onClick={() => setIsMobileOpen(false)} className="text-zinc-500 hover:text-white p-2 border border-zinc-800 rounded-lg">
+                 <X size={28} />
+              </button>
+           </div>
+           
+           <div className="px-8 pt-10 pb-20 flex flex-col gap-6">
+              {NAV_DATA.map((item) => (
+                 <div key={item.id} className="w-full border-b border-zinc-900 pb-4">
+                    {item.type === 'link' && (
+                       <Link 
+                        href={item.href || '#'} 
+                        className="block text-2xl font-oswald text-white uppercase hover:text-[#15F128] transition-colors py-2" 
+                        onClick={() => setIsMobileOpen(false)}
+                       >
+                          {item.label}
+                       </Link>
+                    )}
+
+                    {(item.type === 'mega' || item.type === 'dropdown') && (
+                       <div className="flex flex-col">
+                          <button 
+                             onClick={() => toggleMobileAccordion(item.id)}
+                             className="w-full flex justify-between items-center text-2xl font-oswald text-white uppercase hover:text-[#15F128] transition-colors py-2"
+                          >
+                             <span className="flex items-center gap-3">
+                               {item.icon && <item.icon size={22} className="text-[#15F128]" />}
+                               {item.label}
+                             </span>
+                             <ChevronDown className={`w-6 h-6 transition-transform duration-300 ${expandedMobileItem === item.id ? 'rotate-180' : ''}`} />
+                          </button>
+
+                          <div 
+                              className={`w-full overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out
+                              ${expandedMobileItem === item.id ? 'max-h-[800px] opacity-100 mt-2' : 'max-h-0 opacity-0'}
+                              `}
+                          >
+                             <div className="flex flex-col gap-6 pl-4 border-l border-zinc-800 ml-3 py-4">
+                                {item.sections?.map((section, secIdx) => (
+                                   <div key={secIdx} className="flex flex-col gap-2">
+                                      <p className="text-[#15F128] text-xs font-black uppercase tracking-widest">{section.title}</p>
+                                      <ul className="flex flex-col gap-3">
+                                         {section.items.map((sub, subIdx) => (
+                                            <li key={subIdx}>
+                                               <Link 
+                                                 href={sub.href} 
+                                                 className="text-lg text-zinc-400 hover:text-white font-bold uppercase"
+                                                 onClick={() => setIsMobileOpen(false)}
+                                               >
+                                                  {sub.name}
+                                               </Link>
+                                            </li>
+                                         ))}
+                                      </ul>
+                                   </div>
+                                ))}
+                             </div>
+                          </div>
+                       </div>
+                    )}
+                 </div>
+              ))}
+           </div>
+
+           <div className="pb-12 px-8 flex flex-col gap-6">
+             <a 
+               href="tel:2813597487" 
+               className="flex items-center justify-center gap-3 text-white font-oswald text-2xl uppercase tracking-wider hover:text-[#15F128] transition-colors"
+             >
+                <Phone size={24} className="text-[#15F128]" />
+                (281) 359-7487
+             </a>
+
+             <Link 
+                href="/contact" 
+                className="flex items-center justify-center gap-2 w-full bg-[#15F128] text-black py-4 rounded-xl font-black uppercase tracking-widest hover:bg-white transition-colors"
+                onClick={() => setIsMobileOpen(false)}
+             >
+                Get A Quote <ArrowRight size={18} />
+             </Link>
+           </div>
+      </div>
     </>
   );
 }
