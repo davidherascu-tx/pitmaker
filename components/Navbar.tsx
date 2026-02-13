@@ -42,7 +42,7 @@ const NAV_DATA: NavItemData[] = [
     icon: Truck,
     description: "Custom built mobile pits ranging from single axle to massive commercial rigs.",
     defaultImage: "/trailers.webp", 
-    imageColor: "from-blue-900/60", // Kept specific image tint, can change to orange if desired
+    imageColor: "from-blue-900/60",
     categoryBadge: "Texas Heat on Wheels",
     sections: [
       {
@@ -202,7 +202,7 @@ export default function Navbar() {
       <style jsx global>{`
         @keyframes white-flash {
           0% { box-shadow: 0 0 0 rgba(234, 88, 12, 0); }
-          50% { box-shadow: 0 0 40px rgba(234, 88, 12, 0.4); } /* Orange Glow */
+          50% { box-shadow: 0 0 40px rgba(234, 88, 12, 0.4); } 
           100% { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.8); }
         }
         .animate-flash {
@@ -215,7 +215,7 @@ export default function Navbar() {
         className={`fixed left-1/2 -translate-x-1/2 z-50 
         transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
         ${scrolled 
-           ? "top-2 w-[92%] max-w-[1400px]" // Compact width
+           ? "top-2 w-[92%] max-w-[1400px]" 
            : "top-8 w-[92%] max-w-[1400px]" 
         }
         ${!isVisible ? '-translate-y-[200%] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}
@@ -224,14 +224,12 @@ export default function Navbar() {
         onMouseLeave={() => setActiveMenu(null)}
       >
         <div className={`
-           relative flex items-center justify-between px-4 lg:px-6 
-           transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] rounded-2xl
-           ${scrolled 
-             // SCROLLED: Dark Glass + Orange Glow
-             ? "h-20 bg-[#050505]/80 backdrop-blur-2xl animate-flash shadow-[0_0_15px_rgba(234,88,12,0.15)]" 
-             // TOP: Transparent
-             : "h-24 bg-transparent border-transparent" 
-           } 
+            relative flex items-center justify-between px-4 lg:px-6 
+            transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] rounded-2xl
+            ${scrolled 
+              ? "h-20 bg-black/60 backdrop-blur-md border border-white/10 animate-flash shadow-[0_0_15px_rgba(234,88,12,0.15)]" 
+              : "h-24 bg-transparent border-transparent" 
+            } 
         `}>
           
           {/* --- LOGO --- */}
@@ -246,10 +244,10 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* --- DESKTOP NAV LINKS --- */}
+          {/* --- DESKTOP NAV LINKS (CENTER PILL - LIGHTER GLASS) --- */}
           <div className={`hidden xl:flex items-center gap-1 h-12 px-2 rounded-full transition-all duration-[800ms]
              ${!scrolled 
-                ? "bg-white/5 border border-white/5 backdrop-blur-md shadow-lg" 
+                ? "bg-white/10 border border-white/20 backdrop-blur-md shadow-2xl" 
                 : "bg-transparent border-transparent shadow-none" 
              }
           `}>
@@ -268,7 +266,6 @@ export default function Navbar() {
                   {item.type === 'link' ? (
                     <Link 
                       href={item.href || '#'}
-                      // UPDATED: Padding reduced to px-3 lg:px-4 for tablet spacing
                       className="block px-3 lg:px-4 py-2.5 font-bold uppercase tracking-[0.15em] text-sm text-zinc-200 hover:text-white transition-all duration-300 relative group"
                     >
                       {item.label}
@@ -276,7 +273,6 @@ export default function Navbar() {
                     </Link>
                   ) : (
                     <button 
-                      // UPDATED: Padding reduced to px-3 lg:px-4
                       className={`flex items-center gap-2 px-3 lg:px-4 py-2.5 font-bold uppercase tracking-[0.15em] text-sm transition-all duration-300
                       ${activeMenu === item.id ? 'text-[#EA580C] drop-shadow-[0_0_8px_rgba(234,88,12,0.8)]' : 'text-zinc-200 hover:text-white'}
                       `}
@@ -286,7 +282,6 @@ export default function Navbar() {
                     </button>
                   )}
 
-                {/* Dropdown for "More" */}
                 {item.type === 'dropdown' && (
                   <div 
                      className={`absolute top-full pt-6 left-0 w-96 transition-all duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)]
@@ -302,11 +297,8 @@ export default function Navbar() {
                             rel={subItem.external ? "noopener noreferrer" : undefined}
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-900 group/drop"
                           >
-                             {/* ICONS: 22px */}
                              {idx === 0 ? <Info size={22} className="text-zinc-500 group-hover/drop:text-[#EA580C]" /> : <ShoppingBag size={22} className="text-zinc-500 group-hover/drop:text-[#EA580C]" />}
-                             
-                             {/* UPDATED: Reverted to text-sm (14px) */}
-                             <span className="flex items-center text-zinc-300 text-sm font-bold uppercase tracking-wide group-hover/drop:text-white whitespace-nowrap">
+                             <span className="flex items-center text-zinc-300 text-base font-bold uppercase tracking-wide group-hover/drop:text-white whitespace-nowrap">
                                 {subItem.name}
                                 {subItem.external && <ExternalLink size={14} className="ml-2 opacity-50 group-hover/drop:opacity-100 group-hover/drop:text-[#EA580C]" />}
                              </span>
@@ -363,91 +355,88 @@ export default function Navbar() {
            <div className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden">
              {activeData && activeData.type === 'mega' && (
                <div className="flex min-h-[400px]">
-                  
-                  {/* Links */}
-                  <div className="w-[60%] p-10 bg-[#050505]">
-                     <div className="animate-in fade-in slide-in-from-left-4 duration-500">
-                        <div className="flex items-center gap-3 mb-8">
-                           {activeData.icon && <activeData.icon className="text-[#EA580C]" size={24} />}
-                           <h3 className="text-3xl font-oswald font-bold text-white uppercase tracking-tight">{activeData.label}</h3>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-x-12 gap-y-10">
-                          {activeData.sections?.map((section, idx) => (
-                            <div key={idx}>
-                              {/* HEADER: Reverted to text-xs (12px) */}
-                              <h4 className="text-[#EA580C] text-xs font-black uppercase tracking-widest mb-4 border-b border-zinc-800 pb-2 inline-block">
-                                {section.title}
-                              </h4>
-                              <div className="space-y-3">
-                                {section.items.map((item, itemIdx) => (
-                                  <Link 
-                                    key={itemIdx} 
-                                    href={item.href}
-                                    onMouseEnter={() => {
-                                      setHoveredProductImage(item.image || null);
-                                      setHoveredTitle(item.name);
-                                      setHoveredSection(section.title);
-                                    }}
-                                    onMouseLeave={() => {
-                                      setHoveredProductImage(null);
-                                      setHoveredTitle(null);
-                                      setHoveredSection(null);
-                                    }}
-                                    className="group flex items-center justify-between hover:translate-x-1 transition-transform border-l border-transparent hover:border-[#EA580C] pl-0 hover:pl-3"
-                                  >
-                                    {/* ITEM: Reverted to text-sm (14px) */}
-                                    <span className="text-zinc-400 text-sm font-bold uppercase tracking-wide group-hover:text-white transition-colors">
-                                      {item.name}
-                                    </span>
-                                    {item.badge && (
-                                      /* UPDATED: White BG, Black Text */
-                                      <span className="text-[10px] font-black bg-white text-black px-1.5 py-0.5 rounded uppercase ml-2 group-hover:bg-[#EA580C] group-hover:text-black transition-colors">
-                                        {item.badge}
-                                      </span>
-                                    )}
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                     </div>
-                  </div>
+                 
+                 {/* Links */}
+                 <div className="w-[60%] p-10 bg-[#050505]">
+                    <div className="animate-in fade-in slide-in-from-left-4 duration-500">
+                       <div className="flex items-center gap-3 mb-8">
+                          {activeData.icon && <activeData.icon className="text-[#EA580C]" size={24} />}
+                          <h3 className="text-3xl font-oswald font-bold text-white uppercase tracking-tight">{activeData.label}</h3>
+                       </div>
+                       
+                       <div className="grid grid-cols-2 gap-x-12 gap-y-10">
+                         {activeData.sections?.map((section, idx) => (
+                           <div key={idx}>
+                             <h4 className="text-[#EA580C] text-sm font-black uppercase tracking-widest mb-4 border-b border-zinc-800 pb-2 inline-block">
+                               {section.title}
+                             </h4>
+                             <div className="space-y-3">
+                               {section.items.map((item, itemIdx) => (
+                                 <Link 
+                                   key={itemIdx} 
+                                   href={item.href}
+                                   onMouseEnter={() => {
+                                     setHoveredProductImage(item.image || null);
+                                     setHoveredTitle(item.name);
+                                     setHoveredSection(section.title);
+                                   }}
+                                   onMouseLeave={() => {
+                                     setHoveredProductImage(null);
+                                     setHoveredTitle(null);
+                                     setHoveredSection(null);
+                                   }}
+                                   className="group flex items-center justify-between hover:translate-x-1 transition-transform border-l border-transparent hover:border-[#EA580C] pl-0 hover:pl-3"
+                                 >
+                                   <span className="text-zinc-400 text-base font-bold uppercase tracking-wide group-hover:text-white transition-colors">
+                                     {item.name}
+                                   </span>
+                                   {item.badge && (
+                                     <span className="text-[10px] font-black bg-white text-black px-1.5 py-0.5 rounded uppercase ml-2 group-hover:bg-[#EA580C] group-hover:text-black transition-colors">
+                                       {item.badge}
+                                     </span>
+                                   )}
+                                 </Link>
+                               ))}
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                    </div>
+                 </div>
 
-                  {/* Preview */}
-                  <div className="w-[40%] relative overflow-hidden flex flex-col justify-end border-l border-zinc-900 group/image">
-                     <div className={`absolute inset-0 bg-gradient-to-br ${activeData.imageColor} to-black opacity-50 z-10`} />
-                     
-                     {currentImage ? (
-                        <div className="absolute inset-0 transition-all duration-700 ease-in-out transform scale-105 group-hover/image:scale-100">
-                           <Image 
-                              src={currentImage} 
-                              alt="Preview" 
-                              fill 
-                              className="object-cover opacity-60 mix-blend-overlay"
-                           />
-                        </div>
-                     ) : (
-                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
-                     )}
-                     
-                     <div className="relative z-20 p-10">
-                        <div className="inline-flex items-center gap-2 border border-[#EA580C]/30 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full mb-4">
-                           <span className="text-[10px] text-[#EA580C] uppercase font-bold tracking-widest">
-                              {currentBadge}
-                           </span>
-                        </div>
-                        
-                        <h2 className="text-4xl font-oswald font-black text-white uppercase leading-none mb-4 transition-all duration-300">
-                          {currentTitle}
-                        </h2>
-                        
-                        <Link href="/gallery" className="text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-[#EA580C] transition-colors flex items-center gap-2">
-                           View Full Specs <ArrowRight className="w-3 h-3" />
-                        </Link>
-                     </div>
-                  </div>
+                 {/* Preview */}
+                 <div className="w-[40%] relative overflow-hidden flex flex-col justify-end border-l border-zinc-900 group/image">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${activeData.imageColor} to-black opacity-50 z-10`} />
+                    
+                    {currentImage ? (
+                       <div className="absolute inset-0 transition-all duration-700 ease-in-out transform scale-105 group-hover/image:scale-100">
+                          <Image 
+                             src={currentImage} 
+                             alt="Preview" 
+                             fill 
+                             className="object-cover opacity-60 mix-blend-overlay"
+                          />
+                       </div>
+                    ) : (
+                       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                    )}
+                    
+                    <div className="relative z-20 p-10">
+                       <div className="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-full mb-4 shadow-lg">
+                          <span className="text-[10px] text-black uppercase font-bold tracking-widest">
+                             {currentBadge}
+                          </span>
+                       </div>
+                       
+                       <h2 className="text-4xl font-oswald font-black text-white uppercase leading-none mb-4 transition-all duration-300">
+                         {currentTitle}
+                       </h2>
+                       
+                       <Link href="/gallery" className="text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-[#EA580C] transition-colors flex items-center gap-2">
+                          View Full Specs <ArrowRight className="w-3 h-3" />
+                       </Link>
+                    </div>
+                 </div>
                </div>
              )}
            </div>
@@ -455,7 +444,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* --- MOBILE MENU (UNCHANGED) --- */}
+      {/* --- MOBILE MENU --- */}
       <div 
         className={`fixed inset-0 z-[60] bg-zinc-950 transition-all duration-500 xl:hidden overflow-y-auto
         ${isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}

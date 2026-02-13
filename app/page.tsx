@@ -1,110 +1,246 @@
-import { ArrowRight, Hammer, ShieldCheck, MapPin } from "lucide-react";
+"use client";
+
+import { 
+  ShoppingBag, ExternalLink, ChevronRight, Zap, 
+  Droplet, ChefHat, Wrench 
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { motion, Variants } from "framer-motion"; 
+import Hero from "../components/Hero";
+
+const PRODUCTS = [
+  {
+    id: "trailers",
+    title: "Trailers",
+    subtitle: "Mobile Commercial",
+    img: "/trailers.webp",
+    desc: "Single to multi-axle commercial rigs built from 1/4\" virgin steel for the ultimate road-worthy pit.",
+  },
+  {
+    id: "smokers",
+    title: "Smokers",
+    subtitle: "Insulated Vertical",
+    img: "/smokers.webp",
+    desc: "2000°F thermal lock technology for unmatched heat management and fuel efficiency.",
+  },
+  {
+    id: "grills",
+    title: "Grills",
+    subtitle: "Charcoal Systems",
+    img: "/grills.webp",
+    desc: "High-velocity airflow systems designed for the perfect industrial-grade sear.",
+  }
+];
+
+// --- "HEAVY MECHANICAL" ANIMATION VARIANTS ---
+
+const heavyDrop: Variants = {
+  hidden: { opacity: 0, y: 50, scale: 0.95 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1, 
+    transition: { 
+      type: "spring",
+      stiffness: 80,
+      damping: 20,
+      mass: 1.5 
+    } 
+  }
+};
+
+const revealText: Variants = {
+  hidden: { opacity: 0, y: 40, rotateX: 25 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    rotateX: 0,
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } 
+  }
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 }
+  }
+};
+
+const expandWatermark: Variants = {
+  hidden: { opacity: 0, letterSpacing: "-0.1em", scale: 0.9 },
+  visible: { 
+    opacity: 1, 
+    letterSpacing: "normal", 
+    scale: 1,
+    transition: { duration: 2, ease: "easeOut" } 
+  }
+};
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      
-      {/* HERO SECTION */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background - Suggest using a dark image of steel/sparks/welding */}
-        <div className="absolute inset-0 z-0 bg-neutral-900">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800 via-zinc-950 to-black opacity-80"></div>
-            {/* Optional: Add a subtle grid pattern overlay here */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-        </div>
+    <main className="min-h-screen bg-[#0a0a0a] selection:bg-[#EA580C] overflow-hidden">
+      {/* 1. HERO SLIDER */}
+      <Hero />
 
-        <div className="relative z-10 text-center max-w-4xl px-6">
-          <h2 className="text-orange-600 font-bold tracking-[0.3em] uppercase mb-4 text-sm md:text-base animate-fade-in-up">
-            Handcrafted in Humble, Texas
-          </h2>
-          <h1 className="font-oswald text-6xl md:text-9xl font-black text-white leading-none uppercase mb-6 drop-shadow-2xl">
-            Built to <br /> Outlast.
-          </h1>
-          <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-            From pipe pits to smokehouses. Cutting edge designs, custom built for those who know the difference between hardware and art.
-          </p>
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <button className="bg-orange-600 text-white px-8 py-4 font-oswald uppercase text-lg tracking-wider hover:bg-orange-700 transition-colors">
-              View The Trailers
-            </button>
-            <button className="border border-zinc-600 text-zinc-300 px-8 py-4 font-oswald uppercase text-lg tracking-wider hover:border-white hover:text-white transition-colors">
-              See The Smokers
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* THREE PILLARS (The Products) */}
-      <section className="py-24 bg-zinc-950">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-0 border border-zinc-800 divide-y md:divide-y-0 md:divide-x divide-zinc-800">
+      {/* --- 2. THE GUNMETAL SHOWROOM --- */}
+      <section className="py-32 px-6 bg-[#111111] relative border-b border-white/5" style={{ perspective: "1000px" }}>
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none" />
+        
+        <div className="container mx-auto relative z-10">
           
-          {[ 
-            { title: "BBQ Trailers", sub: "Mobile Supremacy" },
-            { title: "Smokers", sub: "Precision Control" },
-            { title: "Grills", sub: "Heavy Duty" }
-          ].map((item, index) => (
-            <div key={index} className="group relative h-96 bg-zinc-900 hover:bg-zinc-800 transition-all duration-500 overflow-hidden flex flex-col justify-end p-8 cursor-pointer">
-              {/* Number Background */}
-              <span className="absolute top-0 right-4 text-9xl font-black text-zinc-800/50 group-hover:text-zinc-700/50 transition-colors select-none">
-                0{index + 1}
+          {/* Animated Header (3D Reveal) - Set once: false */}
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, margin: "-100px" }}
+            variants={revealText}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-24 border-b border-white/5 pb-12"
+          >
+            <div className="max-w-2xl">
+              <span className="text-[#EA580C] font-bold text-xs uppercase tracking-[0.4em] mb-4 block">
+                The Core Arsenal
               </span>
-              
-              <div className="relative z-10">
-                <p className="text-orange-600 text-sm font-bold uppercase tracking-widest mb-2">{item.sub}</p>
-                <h3 className="text-4xl font-oswald font-bold text-white uppercase mb-4">{item.title}</h3>
-                <div className="w-12 h-1 bg-zinc-700 group-hover:w-full group-hover:bg-orange-600 transition-all duration-500 ease-out"></div>
-              </div>
+              <h2 className="font-oswald text-6xl md:text-8xl font-black text-white uppercase leading-none">
+                Built To <span className="text-zinc-700">Outlast.</span>
+              </h2>
             </div>
-          ))}
+            <div className="flex items-center gap-4 text-zinc-500 bg-white/5 px-6 py-3 rounded-2xl border border-white/5">
+                <Zap size={20} className="text-[#EA580C]" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Humble, Texas Built</span>
+            </div>
+          </motion.div>
 
+          {/* Staggered Product Grid - Set once: false */}
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
+          >
+            {PRODUCTS.map((item) => (
+              <motion.div key={item.id} variants={heavyDrop} className="group flex flex-col">
+                <div className="relative aspect-[4/5] mb-10 overflow-hidden rounded-[2.5rem] border border-white/10 bg-zinc-900 shadow-2xl transition-all duration-500 group-hover:border-[#EA580C]">
+                  <Image 
+                    src={item.img} 
+                    alt={item.title} 
+                    fill 
+                    className="object-cover opacity-80 transition-transform duration-1000 group-hover:scale-110 group-hover:opacity-100"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+
+                <div className="px-2">
+                  <span className="text-[#EA580C] font-bold text-[10px] uppercase tracking-[0.3em] mb-3 block">
+                    {item.subtitle}
+                  </span>
+                  <h3 className="font-oswald text-5xl lg:text-7xl font-black text-white uppercase mb-6 leading-none">
+                    {item.title}
+                  </h3>
+                  <p className="text-zinc-400 text-sm leading-relaxed mb-10 font-light">
+                    {item.desc}
+                  </p>
+                  <Link 
+                    href={item.id === 'trailers' ? '/trailers' : `/${item.id}`}
+                    className="inline-flex items-center gap-4 bg-transparent border border-white/20 text-white px-10 py-4 rounded-full font-bold uppercase text-[10px] tracking-widest hover:bg-white hover:text-black transition-all"
+                  >
+                    Enter Showroom <ChevronRight size={14} />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* FACTORY INFO / ABOUT */}
-      <section className="py-24 bg-zinc-900 text-white relative">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
-          <div className="w-full md:w-1/2">
-            <div className="inline-block border border-orange-600/30 bg-orange-600/10 px-4 py-1 text-orange-500 text-xs font-bold uppercase tracking-widest mb-6 rounded-full">
-              The Pitmaker Standard
-            </div>
-            <h2 className="font-oswald text-5xl font-bold uppercase leading-tight mb-6">
-              Passion for the <span className="text-zinc-500">Process</span>.
-            </h2>
-            <p className="text-zinc-400 leading-relaxed mb-6">
-              The Founders of Pitmaker have built all types of BBQ Pits & BBQ Trailers, from pipe pits to smokehouses. Through this knowledge & experience, we have created new designs that we feel are cutting edge & more durable than anything on the market.
-            </p>
+      {/* --- 3. THE "PURE GLASS" STORE SECTION --- */}
+      <section className="py-48 px-6 bg-black relative overflow-hidden" style={{ perspective: "1000px" }}>
+        
+        {/* Animated Expanding Watermark - Set once: false */}
+        <motion.div 
+          variants={expandWatermark}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false }}
+          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0"
+        >
+          <h2 className="font-oswald text-[23vw] font-black text-white/[0.07] uppercase leading-none">
+            STORE
+          </h2>
+        </motion.div>
+
+        <div className="container mx-auto relative z-10">
+          <motion.div 
+            variants={heavyDrop}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, margin: "-100px" }}
+            className="relative w-full rounded-[4rem] overflow-hidden bg-white/[0.01] border border-white/10 p-12 md:p-24 shadow-2xl"
+          >
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-              <div className="flex items-start gap-4">
-                <ShieldCheck className="text-orange-600 w-8 h-8 shrink-0" />
-                <div>
-                  <h4 className="font-bold uppercase mb-1">Unmatched Durability</h4>
-                  <p className="text-sm text-zinc-500">Built to withstand the elements and years of heat.</p>
+            <div className="mb-20 text-center md:text-left">
+              <motion.div variants={revealText} initial="hidden" whileInView="visible" viewport={{ once: false }}>
+                <div className="inline-flex items-center gap-3 bg-[#EA580C] text-black px-4 py-1.5 rounded-full mb-8">
+                  <ShoppingBag size={14} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Shop Official</span>
                 </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <Hammer className="text-orange-600 w-8 h-8 shrink-0" />
-                <div>
-                  <h4 className="font-bold uppercase mb-1">Custom Built</h4>
-                  <p className="text-sm text-zinc-500">Handcrafted specifically for your needs.</p>
-                </div>
-              </div>
+                <h2 className="font-oswald text-5xl md:text-8xl font-black text-white uppercase leading-[0.85] mb-10">
+                  Spices, Sauces <br /> <span className="text-[#EA580C]">& Accessories</span>
+                </h2>
+              </motion.div>
             </div>
-          </div>
-          
-          {/* Decorative Image Placeholder */}
-          <div className="w-full md:w-1/2 h-[500px] bg-zinc-800 border border-zinc-700 relative group overflow-hidden">
-             <div className="absolute inset-0 flex items-center justify-center text-zinc-600 uppercase font-oswald text-2xl tracking-widest">
-                [Image: Welder working on Steel]
-             </div>
-             {/* Tech overlay effect */}
-             <div className="absolute bottom-0 left-0 bg-white/10 backdrop-blur-md p-6 w-full translate-y-full group-hover:translate-y-0 transition-transform">
-                <p className="text-white font-mono text-sm">SPEC: 1/4" Virgin Steel Plate</p>
-             </div>
-          </div>
+
+            {/* Staggered Glass Cards - Set once: false */}
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: false }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {[
+                { label: "Spices", icon: ChefHat },
+                { label: "Sauces", icon: Droplet },
+                { label: "Accessories", icon: Wrench },
+                { label: "Pitmaker Store", icon: ShoppingBag, color: "bg-[#EA580C] text-black border-[#EA580C]" },
+              ].map((item, idx) => (
+                <motion.div 
+                  variants={heavyDrop}
+                  key={idx} 
+                  className={`flex flex-col items-center justify-center p-14 rounded-[3.5rem] border transition-all duration-700 hover:scale-105 ${
+                    item.color 
+                    ? `${item.color} shadow-[0_0_50px_rgba(234,88,12,0.3)]` 
+                    : "bg-white/[0.05] border-white/10 hover:border-[#EA580C] hover:bg-white/[0.1]"
+                  }`}
+                >
+                  <item.icon size={80} className={item.color ? "text-black" : "text-[#EA580C]"} />
+                  <span className="font-oswald text-3xl font-black uppercase mt-8 tracking-tighter text-center">
+                    {item.label}
+                  </span>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              viewport={{ once: false }}
+              className="mt-20 flex justify-center md:justify-start"
+            >
+               <Link 
+                  href="https://pitmaker.mybigcommerce.com/"
+                  target="_blank"
+                  className="bg-white text-black px-16 py-6 rounded-full font-black uppercase text-xs tracking-[0.3em] hover:bg-[#EA580C] hover:text-white transition-all shadow-2xl flex items-center gap-3"
+                >
+                  Enter Official Store <ExternalLink size={18} />
+                </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
-
     </main>
   );
 }

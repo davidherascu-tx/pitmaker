@@ -1,69 +1,68 @@
-import { Facebook, Instagram, Youtube } from "lucide-react";
+import { Facebook, Instagram, Youtube, Phone, Mail, MapPin } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-zinc-400 border-t border-zinc-800">
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer className="bg-black text-zinc-400 border-t border-white/5">
+      <div className="container mx-auto px-6 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
           
-          {/* Column 1: Brand */}
-          <div className="col-span-1 md:col-span-1">
-            <h2 className="text-2xl font-oswald font-bold text-white uppercase tracking-tighter mb-6">
-              PIT<span className="text-orange-600">MAKER</span>
+          {/* Brand */}
+          <div className="flex flex-col gap-8">
+            <h2 className="text-3xl font-oswald font-black text-white uppercase tracking-tighter">
+              PIT<span className="text-[#EA580C]">MAKER</span>
             </h2>
-            <p className="text-sm leading-relaxed mb-6 text-zinc-500">
-              Creating new BBQ Grill & Smoker designs that are cutting edge & more durable than anything on the market.
+            <p className="text-sm leading-relaxed text-zinc-500 max-w-xs">
+              Texas-born. Built to outlast. We design the most durable BBQ trailers and smokers in the world.
             </p>
             <div className="flex gap-4">
-               {/* Social placeholders */}
-               <div className="w-10 h-10 bg-zinc-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors cursor-pointer"><Facebook size={18} /></div>
-               <div className="w-10 h-10 bg-zinc-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors cursor-pointer"><Instagram size={18} /></div>
-               <div className="w-10 h-10 bg-zinc-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors cursor-pointer"><Youtube size={18} /></div>
+               <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center hover:bg-[#EA580C] hover:text-white transition-all cursor-pointer"><Facebook size={20} /></div>
+               <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center hover:bg-[#EA580C] hover:text-white transition-all cursor-pointer"><Instagram size={20} /></div>
+               <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center hover:bg-[#EA580C] hover:text-white transition-all cursor-pointer"><Youtube size={20} /></div>
             </div>
           </div>
 
-          {/* Column 2: Navigation */}
+          {/* Nav */}
           <div>
-            <h3 className="text-white font-bold uppercase tracking-wider mb-6 text-sm">Products</h3>
-            <ul className="space-y-3 text-sm">
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">BBQ Trailers1</li>
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">Vault Smokers</li>
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">Hitman Grills</li>
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">Accessories</li>
+            <h3 className="text-white font-bold uppercase tracking-widest mb-8 text-xs">Products</h3>
+            <ul className="flex flex-col gap-4 text-sm font-light">
+              <li className="hover:text-[#EA580C] cursor-pointer transition-colors">BBQ Trailers</li>
+              <li className="hover:text-[#EA580C] cursor-pointer transition-colors">Vault Smokers</li>
+              <li className="hover:text-[#EA580C] cursor-pointer transition-colors">Hitman Grills</li>
+              <li className="hover:text-[#EA580C] cursor-pointer transition-colors">Accessories Store</li>
             </ul>
           </div>
 
-          {/* Column 3: Contact */}
+          {/* Contact info */}
           <div>
-            <h3 className="text-white font-bold uppercase tracking-wider mb-6 text-sm">Factory Info</h3>
-            <ul className="space-y-4 text-sm">
-              <li className="flex flex-col">
-                <span className="text-zinc-600 text-xs uppercase font-bold">Address</span>
-                <span className="text-white">6202 Upshaw Dr.<br />Humble, TX 77396</span>
+            <h3 className="text-white font-bold uppercase tracking-widest mb-8 text-xs">Contact</h3>
+            <ul className="flex flex-col gap-6 text-sm">
+              <li className="flex gap-4">
+                <MapPin size={20} className="text-[#EA580C] shrink-0" />
+                <span>6202 Upshaw Dr.<br />Humble, TX 77396</span>
               </li>
-              <li className="flex flex-col">
-                <span className="text-zinc-600 text-xs uppercase font-bold">Phone</span>
-                <span className="text-orange-500 font-bold text-lg">(281) 359-7487</span>
+              <li className="flex items-center gap-4">
+                <Phone size={20} className="text-[#EA580C] shrink-0" />
+                <span className="text-white font-bold">(281) 359-7487</span>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: Hours */}
-          <div className="bg-zinc-900/50 p-6 border border-zinc-800">
-            <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-sm border-b border-zinc-700 pb-2">Open Hours</h3>
-            <ul className="space-y-3 text-sm">
+          {/* Hours */}
+          <div className="bg-zinc-900/40 p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
+            <h3 className="text-white font-bold uppercase tracking-widest mb-6 text-xs border-b border-white/5 pb-4">Factory Hours</h3>
+            <ul className="flex flex-col gap-3 text-sm">
               <li className="flex justify-between">
-                <span>Mon – Fri</span>
+                <span className="text-zinc-500">Mon – Fri</span>
                 <span className="text-white font-bold">9am – 6pm</span>
               </li>
               <li className="flex justify-between">
-                <span>Saturday</span>
+                <span className="text-zinc-500">Sat</span>
                 <span className="text-white font-bold">9am – 4pm</span>
               </li>
-              <li className="flex justify-between text-zinc-600">
-                <span>Sunday</span>
-                <span>Closed</span>
+              <li className="flex justify-between">
+                <span className="text-zinc-500">Sun</span>
+                <span className="text-[#EA580C] font-bold">Closed</span>
               </li>
             </ul>
           </div>
@@ -71,11 +70,13 @@ export default function Footer() {
         </div>
       </div>
       
-      {/* Sub Footer */}
-      <div className="border-t border-zinc-900 bg-zinc-950 py-6">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-zinc-600 uppercase tracking-wider">
+      <div className="border-t border-white/5 py-8">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[10px] text-zinc-600 uppercase tracking-[0.2em]">
           <p>&copy; {new Date().getFullYear()} Pitmaker. Handcrafted in Texas.</p>
-          <p>Privacy Policy</p>
+          <div className="flex gap-8 mt-4 md:mt-0">
+            <Link href="/" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/" className="hover:text-white transition-colors">Terms of Sale</Link>
+          </div>
         </div>
       </div>
     </footer>
