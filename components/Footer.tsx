@@ -27,7 +27,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-bold uppercase tracking-wider mb-6 text-sm">Products</h3>
             <ul className="space-y-3 text-sm">
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">BBQ Trailers</li>
+              <li className="hover:text-orange-500 cursor-pointer transition-colors">BBQ Trailers1</li>
               <li className="hover:text-orange-500 cursor-pointer transition-colors">Vault Smokers</li>
               <li className="hover:text-orange-500 cursor-pointer transition-colors">Hitman Grills</li>
               <li className="hover:text-orange-500 cursor-pointer transition-colors">Accessories</li>
