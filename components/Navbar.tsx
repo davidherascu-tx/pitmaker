@@ -42,7 +42,7 @@ const NAV_DATA: NavItemData[] = [
     icon: Truck,
     description: "Custom built mobile pits ranging from single axle to massive commercial rigs.",
     defaultImage: "/trailers.webp", 
-    imageColor: "from-blue-900/60",
+    imageColor: "from-blue-900/60", // Kept specific image tint, can change to orange if desired
     categoryBadge: "Texas Heat on Wheels",
     sections: [
       {
@@ -201,9 +201,9 @@ export default function Navbar() {
     <>
       <style jsx global>{`
         @keyframes white-flash {
-          0% { border-color: rgba(255, 255, 255, 0); }
-          50% { border-color: rgba(255, 255, 255, 0.5); box-shadow: 0 0 40px rgba(255,255,255,0.1); }
-          100% { border-color: rgba(255, 255, 255, 0.1); }
+          0% { box-shadow: 0 0 0 rgba(234, 88, 12, 0); }
+          50% { box-shadow: 0 0 40px rgba(234, 88, 12, 0.4); } /* Orange Glow */
+          100% { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.8); }
         }
         .animate-flash {
           animation: white-flash 1.2s ease-out 1 forwards;
@@ -215,8 +215,8 @@ export default function Navbar() {
         className={`fixed left-1/2 -translate-x-1/2 z-50 
         transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
         ${scrolled 
-           ? "top-2 w-[95%] max-w-[1600px]" 
-           : "top-8 w-[95%] max-w-[1600px]" 
+           ? "top-2 w-[92%] max-w-[1400px]" // Compact width
+           : "top-8 w-[92%] max-w-[1400px]" 
         }
         ${!isVisible ? '-translate-y-[200%] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}
         xl:translate-y-0 xl:opacity-100 xl:pointer-events-auto
@@ -224,10 +224,12 @@ export default function Navbar() {
         onMouseLeave={() => setActiveMenu(null)}
       >
         <div className={`
-           relative flex items-center justify-between px-4 lg:px-8 
+           relative flex items-center justify-between px-4 lg:px-6 
            transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1.0)] rounded-2xl
            ${scrolled 
-             ? "h-20 bg-[#050505]/80 backdrop-blur-2xl animate-flash shadow-2xl" 
+             // SCROLLED: Dark Glass + Orange Glow
+             ? "h-20 bg-[#050505]/80 backdrop-blur-2xl animate-flash shadow-[0_0_15px_rgba(234,88,12,0.15)]" 
+             // TOP: Transparent
              : "h-24 bg-transparent border-transparent" 
            } 
         `}>
@@ -266,15 +268,17 @@ export default function Navbar() {
                   {item.type === 'link' ? (
                     <Link 
                       href={item.href || '#'}
-                      className="block px-6 py-2.5 font-bold uppercase tracking-[0.15em] text-sm text-zinc-200 hover:text-white transition-all duration-300 relative group"
+                      // UPDATED: Padding reduced to px-3 lg:px-4 for tablet spacing
+                      className="block px-3 lg:px-4 py-2.5 font-bold uppercase tracking-[0.15em] text-sm text-zinc-200 hover:text-white transition-all duration-300 relative group"
                     >
                       {item.label}
-                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#15F128] transition-all duration-300 group-hover:w-1/2 shadow-[0_0_8px_#15F128]" />
+                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#EA580C] transition-all duration-300 group-hover:w-1/2 shadow-[0_0_8px_#EA580C]" />
                     </Link>
                   ) : (
                     <button 
-                      className={`flex items-center gap-2 px-6 py-2.5 font-bold uppercase tracking-[0.15em] text-sm transition-all duration-300
-                      ${activeMenu === item.id ? 'text-[#15F128] drop-shadow-[0_0_8px_rgba(21,241,40,0.8)]' : 'text-zinc-200 hover:text-white'}
+                      // UPDATED: Padding reduced to px-3 lg:px-4
+                      className={`flex items-center gap-2 px-3 lg:px-4 py-2.5 font-bold uppercase tracking-[0.15em] text-sm transition-all duration-300
+                      ${activeMenu === item.id ? 'text-[#EA580C] drop-shadow-[0_0_8px_rgba(234,88,12,0.8)]' : 'text-zinc-200 hover:text-white'}
                       `}
                     >
                       {item.label}
@@ -298,13 +302,13 @@ export default function Navbar() {
                             rel={subItem.external ? "noopener noreferrer" : undefined}
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-900 group/drop"
                           >
-                             {/* Icons size 22 */}
-                             {idx === 0 ? <Info size={22} className="text-zinc-500 group-hover/drop:text-[#15F128]" /> : <ShoppingBag size={22} className="text-zinc-500 group-hover/drop:text-[#15F128]" />}
+                             {/* ICONS: 22px */}
+                             {idx === 0 ? <Info size={22} className="text-zinc-500 group-hover/drop:text-[#EA580C]" /> : <ShoppingBag size={22} className="text-zinc-500 group-hover/drop:text-[#EA580C]" />}
                              
-                             {/* UPDATED: "More" font decreased to text-sm */}
+                             {/* UPDATED: Reverted to text-sm (14px) */}
                              <span className="flex items-center text-zinc-300 text-sm font-bold uppercase tracking-wide group-hover/drop:text-white whitespace-nowrap">
                                 {subItem.name}
-                                {subItem.external && <ExternalLink size={14} className="ml-2 opacity-50 group-hover/drop:opacity-100 group-hover/drop:text-[#15F128]" />}
+                                {subItem.external && <ExternalLink size={14} className="ml-2 opacity-50 group-hover/drop:opacity-100 group-hover/drop:text-[#EA580C]" />}
                              </span>
                           </Link>
                        ))}
@@ -316,9 +320,9 @@ export default function Navbar() {
           </div>
 
           {/* --- RIGHT ACTION BUTTONS --- */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-4 xl:gap-8">
             <div className="flex flex-col items-end group cursor-pointer">
-               <div className="flex items-center gap-2 text-zinc-500 group-hover:text-[#15F128] transition-colors drop-shadow-md">
+               <div className="flex items-center gap-2 text-zinc-500 group-hover:text-[#EA580C] transition-colors drop-shadow-md">
                   <Phone size={10} />
                   <span className="text-[9px] uppercase font-black tracking-widest">Order Line</span>
                </div>
@@ -329,7 +333,7 @@ export default function Navbar() {
 
             <Link 
               href="/contact" 
-              className={`group relative overflow-hidden bg-[#15F128] text-black rounded-lg font-black uppercase text-xs tracking-widest transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(21,241,40,0.6)] z-50
+              className={`group relative overflow-hidden bg-[#EA580C] text-black rounded-lg font-black uppercase text-xs tracking-widest transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(234,88,12,0.6)] z-50
               ${scrolled ? 'px-5 py-2' : 'px-7 py-3'}
               `}
             >
@@ -342,7 +346,7 @@ export default function Navbar() {
 
           {/* --- MOBILE TOGGLE --- */}
           <button 
-            className="xl:hidden text-white hover:text-[#15F128] transition-colors p-2"
+            className="xl:hidden text-white hover:text-[#EA580C] transition-colors p-2"
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             aria-label="Toggle Menu"
           >
@@ -364,14 +368,15 @@ export default function Navbar() {
                   <div className="w-[60%] p-10 bg-[#050505]">
                      <div className="animate-in fade-in slide-in-from-left-4 duration-500">
                         <div className="flex items-center gap-3 mb-8">
-                           {activeData.icon && <activeData.icon className="text-[#15F128]" size={24} />}
+                           {activeData.icon && <activeData.icon className="text-[#EA580C]" size={24} />}
                            <h3 className="text-3xl font-oswald font-bold text-white uppercase tracking-tight">{activeData.label}</h3>
                         </div>
                         
                         <div className="grid grid-cols-2 gap-x-12 gap-y-10">
                           {activeData.sections?.map((section, idx) => (
                             <div key={idx}>
-                              <h4 className="text-[#15F128] text-xs font-black uppercase tracking-widest mb-4 border-b border-zinc-800 pb-2 inline-block">
+                              {/* HEADER: Reverted to text-xs (12px) */}
+                              <h4 className="text-[#EA580C] text-xs font-black uppercase tracking-widest mb-4 border-b border-zinc-800 pb-2 inline-block">
                                 {section.title}
                               </h4>
                               <div className="space-y-3">
@@ -389,14 +394,15 @@ export default function Navbar() {
                                       setHoveredTitle(null);
                                       setHoveredSection(null);
                                     }}
-                                    className="group flex items-center justify-between hover:translate-x-1 transition-transform border-l border-transparent hover:border-[#15F128] pl-0 hover:pl-3"
+                                    className="group flex items-center justify-between hover:translate-x-1 transition-transform border-l border-transparent hover:border-[#EA580C] pl-0 hover:pl-3"
                                   >
-                                    {/* UPDATED: Mega Menu Font Increased to text-base */}
-                                    <span className="text-zinc-400 text-base font-bold uppercase tracking-wide group-hover:text-white transition-colors">
+                                    {/* ITEM: Reverted to text-sm (14px) */}
+                                    <span className="text-zinc-400 text-sm font-bold uppercase tracking-wide group-hover:text-white transition-colors">
                                       {item.name}
                                     </span>
                                     {item.badge && (
-                                      <span className="text-[10px] font-black bg-zinc-800 text-white px-1.5 py-0.5 rounded uppercase ml-2 group-hover:bg-[#15F128] group-hover:text-black transition-colors">
+                                      /* UPDATED: White BG, Black Text */
+                                      <span className="text-[10px] font-black bg-white text-black px-1.5 py-0.5 rounded uppercase ml-2 group-hover:bg-[#EA580C] group-hover:text-black transition-colors">
                                         {item.badge}
                                       </span>
                                     )}
@@ -427,8 +433,8 @@ export default function Navbar() {
                      )}
                      
                      <div className="relative z-20 p-10">
-                        <div className="inline-flex items-center gap-2 border border-[#15F128]/30 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full mb-4">
-                           <span className="text-[10px] text-[#15F128] uppercase font-bold tracking-widest">
+                        <div className="inline-flex items-center gap-2 border border-[#EA580C]/30 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full mb-4">
+                           <span className="text-[10px] text-[#EA580C] uppercase font-bold tracking-widest">
                               {currentBadge}
                            </span>
                         </div>
@@ -437,7 +443,7 @@ export default function Navbar() {
                           {currentTitle}
                         </h2>
                         
-                        <Link href="/gallery" className="text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-[#15F128] transition-colors flex items-center gap-2">
+                        <Link href="/gallery" className="text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-[#EA580C] transition-colors flex items-center gap-2">
                            View Full Specs <ArrowRight className="w-3 h-3" />
                         </Link>
                      </div>
@@ -475,7 +481,7 @@ export default function Navbar() {
                     {item.type === 'link' && (
                        <Link 
                         href={item.href || '#'} 
-                        className="block text-2xl font-oswald text-white uppercase hover:text-[#15F128] transition-colors py-2" 
+                        className="block text-2xl font-oswald text-white uppercase hover:text-[#EA580C] transition-colors py-2" 
                         onClick={() => setIsMobileOpen(false)}
                        >
                           {item.label}
@@ -486,10 +492,10 @@ export default function Navbar() {
                        <div className="flex flex-col">
                           <button 
                              onClick={() => toggleMobileAccordion(item.id)}
-                             className="w-full flex justify-between items-center text-2xl font-oswald text-white uppercase hover:text-[#15F128] transition-colors py-2"
+                             className="w-full flex justify-between items-center text-2xl font-oswald text-white uppercase hover:text-[#EA580C] transition-colors py-2"
                           >
                              <span className="flex items-center gap-3">
-                               {item.icon && <item.icon size={22} className="text-[#15F128]" />}
+                               {item.icon && <item.icon size={22} className="text-[#EA580C]" />}
                                {item.label}
                              </span>
                              <ChevronDown className={`w-6 h-6 transition-transform duration-300 ${expandedMobileItem === item.id ? 'rotate-180' : ''}`} />
@@ -503,7 +509,7 @@ export default function Navbar() {
                              <div className="flex flex-col gap-6 pl-4 border-l border-zinc-800 ml-3 py-4">
                                 {item.sections?.map((section, secIdx) => (
                                    <div key={secIdx} className="flex flex-col gap-2">
-                                      <p className="text-[#15F128] text-xs font-black uppercase tracking-widest">{section.title}</p>
+                                      <p className="text-[#EA580C] text-xs font-black uppercase tracking-widest">{section.title}</p>
                                       <ul className="flex flex-col gap-3">
                                          {section.items.map((sub, subIdx) => (
                                             <li key={subIdx}>
@@ -530,15 +536,15 @@ export default function Navbar() {
            <div className="pb-12 px-8 flex flex-col gap-6">
              <a 
                href="tel:2813597487" 
-               className="flex items-center justify-center gap-3 text-white font-oswald text-2xl uppercase tracking-wider hover:text-[#15F128] transition-colors"
+               className="flex items-center justify-center gap-3 text-white font-oswald text-2xl uppercase tracking-wider hover:text-[#EA580C] transition-colors"
              >
-                <Phone size={24} className="text-[#15F128]" />
+                <Phone size={24} className="text-[#EA580C]" />
                 (281) 359-7487
              </a>
 
              <Link 
                 href="/contact" 
-                className="flex items-center justify-center gap-2 w-full bg-[#15F128] text-black py-4 rounded-xl font-black uppercase tracking-widest hover:bg-white transition-colors"
+                className="flex items-center justify-center gap-2 w-full bg-[#EA580C] text-black py-4 rounded-xl font-black uppercase tracking-widest hover:bg-white transition-colors"
                 onClick={() => setIsMobileOpen(false)}
              >
                 Get A Quote <ArrowRight size={18} />
