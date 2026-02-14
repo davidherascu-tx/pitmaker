@@ -1,12 +1,13 @@
 "use client";
 
+import { useRef } from "react";
 import { 
   ShoppingBag, ExternalLink, ChevronRight, Zap, 
   Droplet, ChefHat, Wrench 
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, Variants } from "framer-motion"; 
+import { motion, Variants, useScroll, useTransform } from "framer-motion"; 
 import Hero from "../components/Hero";
 
 const PRODUCTS = [
@@ -34,19 +35,13 @@ const PRODUCTS = [
 ];
 
 // --- "HEAVY MECHANICAL" ANIMATION VARIANTS ---
-
 const heavyDrop: Variants = {
   hidden: { opacity: 0, y: 50, scale: 0.95 },
   visible: { 
     opacity: 1, 
     y: 0, 
     scale: 1, 
-    transition: { 
-      type: "spring",
-      stiffness: 80,
-      damping: 20,
-      mass: 1.5 
-    } 
+    transition: { type: "spring", stiffness: 80, damping: 20, mass: 1.5 } 
   }
 };
 
@@ -68,19 +63,47 @@ const staggerContainer: Variants = {
   }
 };
 
-const expandWatermark: Variants = {
-  hidden: { opacity: 0, letterSpacing: "-0.1em", scale: 0.9 },
+// --- TEXT STAGGER VARIANTS (No blur, 100% crisp) ---
+const staggerTextContainer: Variants = {
+  hidden: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08, 
+      delayChildren: 0.1,    
+    }
+  }
+};
+
+const letterFade: Variants = {
+  hidden: { opacity: 0, y: 25 }, 
   visible: { 
     opacity: 1, 
-    letterSpacing: "normal", 
-    scale: 1,
-    transition: { duration: 2, ease: "easeOut" } 
+    y: 0, 
+    transition: { duration: 0.4, ease: "easeOut" } 
   }
 };
 
 export default function Home() {
+  // --- SCROLL ANIMATION HOOKS FOR THE STORE SECTION ---
+  const storeRef = useRef<HTMLElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: storeRef,
+    // Tracks progress as soon as section enters from bottom, until it snaps to top
+    offset: ["start end", "start start"] 
+  });
+
+  // STORE Text Animation Maps
+  // Starts rotated 90 degrees (on its side), finishes flat at 0 degrees
+  const storeRotate = useTransform(scrollYProgress, [0, 1], [90, 0]);
+  // Starts off-screen to the right, ends perfectly centered
+  const storeX = useTransform(scrollYProgress, [0, 1], ["50vw", "0vw"]);
+  const storeOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]); 
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] selection:bg-[#EA580C] overflow-hidden">
+      
       {/* 1. HERO SLIDER */}
       <Hero />
 
@@ -90,29 +113,49 @@ export default function Home() {
         
         <div className="container mx-auto relative z-10">
           
-          {/* Animated Header (3D Reveal) - Set once: false */}
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, margin: "-100px" }}
-            variants={revealText}
-            className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-24 border-b border-white/5 pb-12"
-          >
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-24 border-b border-white/5 pb-12">
             <div className="max-w-2xl">
               <span className="text-[#EA580C] font-bold text-xs uppercase tracking-[0.4em] mb-4 block">
                 The Core Arsenal
               </span>
-              <h2 className="font-oswald text-6xl md:text-8xl font-black text-white uppercase leading-none">
-                Built To <span className="text-zinc-700">Outlast.</span>
-              </h2>
+              
+              <motion.h2 
+                variants={staggerTextContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, margin: "-100px" }}
+                className="font-oswald text-6xl md:text-8xl font-black uppercase leading-none inline-block flex-wrap"
+              >
+                {"Built To ".split("").map((char, i) => (
+                  <motion.span 
+                    key={`built-${i}`} 
+                    variants={letterFade} 
+                    className="inline-block bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent pb-2"
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
+                
+                <span className="inline-block">
+                  {"Outlast.".split("").map((char, i) => (
+                    <motion.span 
+                      key={`outlast-${i}`} 
+                      variants={letterFade} 
+                      className="inline-block bg-gradient-to-b from-zinc-500 to-zinc-800 bg-clip-text text-transparent pb-2"
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </span>
+              </motion.h2>
+
             </div>
             <div className="flex items-center gap-4 text-zinc-500 bg-white/5 px-6 py-3 rounded-2xl border border-white/5">
                 <Zap size={20} className="text-[#EA580C]" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Humble, Texas Built</span>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Staggered Product Grid - Set once: false */}
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -156,20 +199,21 @@ export default function Home() {
       </section>
 
       {/* --- 3. THE "PURE GLASS" STORE SECTION --- */}
-      <section className="py-48 px-6 bg-black relative overflow-hidden" style={{ perspective: "1000px" }}>
+      <section ref={storeRef} className="py-48 px-6 bg-black relative overflow-hidden" style={{ perspective: "1000px" }}>
         
-        {/* Animated Expanding Watermark - Set once: false */}
-        <motion.div 
-          variants={expandWatermark}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0"
-        >
-          <h2 className="font-oswald text-[23vw] font-black text-white/[0.07] uppercase leading-none">
+        {/* Dynamic Scroll-Linked Watermark */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
+          <motion.h2 
+            style={{
+              rotate: storeRotate,
+              x: storeX,
+              opacity: storeOpacity
+            }}
+            className="font-oswald text-[23vw] font-black text-white/[0.07] uppercase leading-none"
+          >
             STORE
-          </h2>
-        </motion.div>
+          </motion.h2>
+        </div>
 
         <div className="container mx-auto relative z-10">
           <motion.div 
@@ -186,13 +230,42 @@ export default function Home() {
                   <ShoppingBag size={14} />
                   <span className="text-[10px] font-black uppercase tracking-widest">Shop Official</span>
                 </div>
-                <h2 className="font-oswald text-5xl md:text-8xl font-black text-white uppercase leading-[0.85] mb-10">
-                  Spices, Sauces <br /> <span className="text-[#EA580C]">& Accessories</span>
-                </h2>
+                
+                <motion.h2 
+                  variants={staggerTextContainer}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: false }}
+                  className="font-oswald text-5xl md:text-8xl font-black uppercase leading-[0.85] mb-10 block"
+                >
+                  <span className="inline-block">
+                    {"Spices, Sauces".split("").map((char, i) => (
+                      <motion.span 
+                        key={`spices-${i}`} 
+                        variants={letterFade} 
+                        className="inline-block bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent pb-2"
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </motion.span>
+                    ))}
+                  </span>
+                  <br />
+                  <span className="inline-block">
+                    {"& Accessories".split("").map((char, i) => (
+                      <motion.span 
+                        key={`acc-${i}`} 
+                        variants={letterFade} 
+                        className="inline-block bg-gradient-to-b from-[#EA580C] to-[#9a3412] bg-clip-text text-transparent pb-2"
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </motion.span>
+                    ))}
+                  </span>
+                </motion.h2>
+
               </motion.div>
             </div>
 
-            {/* Staggered Glass Cards - Set once: false */}
             <motion.div 
               variants={staggerContainer}
               initial="hidden"
