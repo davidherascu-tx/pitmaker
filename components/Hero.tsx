@@ -41,6 +41,7 @@ const TRANSITION_DURATION = 1500;
 const CIRCLE_RADIUS = 36;
 const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
+// --- HERO ANIMATION VARIANTS (Crisp, No Blur) ---
 const slideContainerVariants: Variants = {
   hidden: { 
     opacity: 0, 
@@ -120,10 +121,18 @@ export default function Hero() {
         const isActive = index === current;
         return (
           <div key={slide.id} className={`absolute inset-0 w-full h-full pointer-events-none ${isActive ? "z-10" : "z-0"}`}>
-            <div className="absolute inset-0 overflow-hidden">
-               <Image src={slide.image} alt={slide.title} fill className={`object-cover transition-all duration-[1500ms] ease-out ${isActive ? "scale-100 blur-0" : "scale-150 blur-2xl grayscale"}`} priority={index === 0} />
-               <div className="absolute inset-0 bg-black/60" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 overflow-hidden bg-[#0a0a0a]">
+               {/* PROFESSIONAL TRANSITION: Replaced blur with crossfade and scale */}
+               <Image 
+                 src={slide.image} 
+                 alt={slide.title} 
+                 fill 
+                 className={`object-cover transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isActive ? "scale-100 opacity-100" : "scale-110 opacity-0"}`} 
+                 priority={index === 0} 
+               />
+               
+               <div className={`absolute inset-0 bg-black/30 transition-opacity duration-[1500ms] ${isActive ? "opacity-100" : "opacity-0"}`} />
+               <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent transition-opacity duration-[1500ms] ${isActive ? "opacity-100" : "opacity-0"}`} />
             </div>
             
             <div className="relative h-full container mx-auto px-4 md:px-12 pb-32 md:pb-32 flex flex-col justify-end items-start pointer-events-none">
@@ -132,9 +141,9 @@ export default function Hero() {
                 variants={slideContainerVariants}
                 initial="hidden"
                 animate={isActive ? "visible" : "hidden"}
-                className="w-full md:w-fit max-w-7xl bg-black/60 backdrop-blur-md border border-white/10 p-6 md:p-12 rounded-3xl shadow-2xl pointer-events-auto"
+                className="w-full md:w-fit max-w-7xl bg-black/40 backdrop-blur-md border border-white/10 p-6 md:p-12 rounded-3xl shadow-2xl pointer-events-auto"
               >
-                {/* 1. SUBTITLE (Mobile Optimized Word-Wrap) */}
+                {/* 1. SUBTITLE */}
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-4">
                     <motion.span variants={textItemVariants} className="w-8 h-[3px] bg-[#EA580C] inline-block"></motion.span>
                     <span className="text-[#EA580C] font-bold text-[10px] md:text-sm uppercase tracking-widest flex flex-wrap gap-x-1">
@@ -150,8 +159,8 @@ export default function Hero() {
                     </span>
                 </div>
                 
-                {/* 2. TITLE (Mobile Optimized Word-Wrap + Gradient) */}
-                <h1 className="font-oswald font-black text-4xl sm:text-6xl md:text-8xl uppercase leading-[1.1] md:leading-none mb-4 md:mb-6 drop-shadow-xl flex flex-wrap gap-x-2 md:gap-x-4">
+                {/* 2. TITLE (Letter-by-Letter + Gradient) */}
+                <h1 className="font-oswald font-black text-5xl sm:text-6xl md:text-8xl uppercase leading-[1.1] md:leading-none mb-4 md:mb-6 drop-shadow-xl flex flex-wrap gap-x-2 md:gap-x-4">
                    {slide.title.split(" ").map((word, wIdx) => (
                        <span key={`word-${wIdx}`} className="inline-block whitespace-nowrap">
                          {word.split("").map((char, cIdx) => (
@@ -167,7 +176,7 @@ export default function Hero() {
                    ))}
                 </h1>
                 
-                {/* 3. DESCRIPTION (Word-by-Word) */}
+                {/* 3. DESCRIPTION */}
                 <p className="text-zinc-200 text-sm md:text-xl font-light leading-relaxed mb-6 md:mb-8 max-w-2xl">
                   {slide.description.split(" ").map((word, i) => (
                     <motion.span key={`desc-${i}`} variants={textItemVariants} className="inline-block mr-[0.3em] mb-1">
@@ -191,13 +200,14 @@ export default function Hero() {
         );
       })}
       
+      {/* 5. SLIDER CONTROLS */}
       <div className="absolute bottom-6 md:bottom-8 right-4 md:right-12 z-30 flex items-center gap-4 md:gap-8 pointer-events-auto">
-        <div className="hidden md:flex items-end gap-2 font-oswald text-white/50 select-none">
+        <div className="hidden md:flex items-end gap-2 font-oswald text-white/50 select-none drop-shadow-md">
           <span className="text-white text-5xl font-bold tracking-tighter">0{current + 1}</span>
           <span className="text-xl mb-1 font-light">/ 0{SLIDES.length}</span>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
-          <button onClick={handleManualPrev} className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 bg-black/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white hover:text-black transition-all active:scale-95"><ChevronLeft size={20} className="md:w-6 md:h-6" /></button>
+          <button onClick={handleManualPrev} className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white hover:text-black transition-all active:scale-95"><ChevronLeft size={20} className="md:w-6 md:h-6" /></button>
           <button onClick={handleManualNext} className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center group active:scale-95 transition-transform">
             <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 80 80">
               <circle cx="40" cy="40" r={CIRCLE_RADIUS} stroke="white" strokeWidth="1" fill="none" className="opacity-20" />

@@ -34,7 +34,6 @@ const PRODUCTS = [
   }
 ];
 
-// --- "HEAVY MECHANICAL" ANIMATION VARIANTS ---
 const heavyDrop: Variants = {
   hidden: { opacity: 0, y: 50, scale: 0.95 },
   visible: { 
@@ -63,7 +62,7 @@ const staggerContainer: Variants = {
   }
 };
 
-// --- TEXT STAGGER VARIANTS (No blur, 100% crisp) ---
+// --- TEXT STAGGER VARIANTS (No blur, perfectly crisp) ---
 const staggerTextContainer: Variants = {
   hidden: { opacity: 1 },
   visible: {
@@ -85,35 +84,35 @@ const letterFade: Variants = {
 };
 
 export default function Home() {
-  // --- SCROLL ANIMATION HOOKS FOR THE STORE SECTION ---
   const storeRef = useRef<HTMLElement>(null);
   
   const { scrollYProgress } = useScroll({
     target: storeRef,
-    // Tracks progress as soon as section enters from bottom, until it snaps to top
     offset: ["start end", "start start"] 
   });
 
   // STORE Text Animation Maps
-  // Starts rotated 90 degrees (on its side), finishes flat at 0 degrees
-  const storeRotate = useTransform(scrollYProgress, [0, 1], [90, 0]);
-  // Starts off-screen to the right, ends perfectly centered
-  const storeX = useTransform(scrollYProgress, [0, 1], ["50vw", "0vw"]);
+  // Starts on the left (-60vw) at -90 degrees (sideways), lands center (0vw) perfectly flat (0 degrees)
+  const storeRotate = useTransform(scrollYProgress, [0, 1], [-90, 0]);
+  const storeX = useTransform(scrollYProgress, [0, 1], ["-60vw", "0vw"]);
+  const storeY = useTransform(scrollYProgress, [0, 1], ["10vh", "0vh"]);
   const storeOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]); 
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] selection:bg-[#EA580C] overflow-hidden">
+    <main className="w-full bg-[#0a0a0a] selection:bg-[#EA580C]">
       
       {/* 1. HERO SLIDER */}
-      <Hero />
+      <section className="snap-start min-h-[100dvh] w-full relative">
+        <Hero />
+      </section>
 
       {/* --- 2. THE GUNMETAL SHOWROOM --- */}
-      <section className="py-32 px-6 bg-[#111111] relative border-b border-white/5" style={{ perspective: "1000px" }}>
+      <section className="snap-start min-h-[100dvh] w-full flex flex-col justify-center py-24 px-6 bg-[#111111] relative border-b border-white/5" style={{ perspective: "1000px" }}>
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none" />
         
-        <div className="container mx-auto relative z-10">
+        <div className="container mx-auto relative z-10 pt-12">
           
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-24 border-b border-white/5 pb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 lg:mb-24 border-b border-white/5 pb-8 lg:pb-12">
             <div className="max-w-2xl">
               <span className="text-[#EA580C] font-bold text-xs uppercase tracking-[0.4em] mb-4 block">
                 The Core Arsenal
@@ -124,38 +123,33 @@ export default function Home() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: false, margin: "-100px" }}
-                className="font-oswald text-6xl md:text-8xl font-black uppercase leading-none inline-block flex-wrap"
+                className="font-oswald text-5xl md:text-8xl font-black uppercase leading-none flex flex-wrap gap-x-3"
               >
-                {"Built To ".split("").map((char, i) => (
-                  <motion.span 
-                    key={`built-${i}`} 
-                    variants={letterFade} 
-                    className="inline-block bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent pb-2"
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-                
-                <span className="inline-block">
+                <span className="inline-block whitespace-nowrap">
+                  {"Built".split("").map((char, i) => (
+                    <motion.span key={`built-${i}`} variants={letterFade} className="inline-block bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent pb-2">{char}</motion.span>
+                  ))}
+                </span>
+                <span className="inline-block whitespace-nowrap">
+                  {"To".split("").map((char, i) => (
+                    <motion.span key={`to-${i}`} variants={letterFade} className="inline-block bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent pb-2">{char}</motion.span>
+                  ))}
+                </span>
+                <span className="inline-block whitespace-nowrap">
                   {"Outlast.".split("").map((char, i) => (
-                    <motion.span 
-                      key={`outlast-${i}`} 
-                      variants={letterFade} 
-                      className="inline-block bg-gradient-to-b from-zinc-500 to-zinc-800 bg-clip-text text-transparent pb-2"
-                    >
-                      {char}
-                    </motion.span>
+                    <motion.span key={`outlast-${i}`} variants={letterFade} className="inline-block bg-gradient-to-b from-zinc-500 to-zinc-800 bg-clip-text text-transparent pb-2">{char}</motion.span>
                   ))}
                 </span>
               </motion.h2>
 
             </div>
-            <div className="flex items-center gap-4 text-zinc-500 bg-white/5 px-6 py-3 rounded-2xl border border-white/5">
+            <div className="hidden md:flex items-center gap-4 text-zinc-500 bg-white/5 px-6 py-3 rounded-2xl border border-white/5">
                 <Zap size={20} className="text-[#EA580C]" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Humble, Texas Built</span>
             </div>
           </div>
 
+          {/* Original Vertical Stacking Grid */}
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -165,7 +159,7 @@ export default function Home() {
           >
             {PRODUCTS.map((item) => (
               <motion.div key={item.id} variants={heavyDrop} className="group flex flex-col">
-                <div className="relative aspect-[4/5] mb-10 overflow-hidden rounded-[2.5rem] border border-white/10 bg-zinc-900 shadow-2xl transition-all duration-500 group-hover:border-[#EA580C]">
+                <div className="relative aspect-[4/5] mb-6 md:mb-10 overflow-hidden rounded-[2.5rem] border border-white/10 bg-zinc-900 shadow-2xl transition-all duration-500 group-hover:border-[#EA580C]">
                   <Image 
                     src={item.img} 
                     alt={item.title} 
@@ -182,7 +176,7 @@ export default function Home() {
                   <h3 className="font-oswald text-5xl lg:text-7xl font-black text-white uppercase mb-6 leading-none">
                     {item.title}
                   </h3>
-                  <p className="text-zinc-400 text-sm leading-relaxed mb-10 font-light">
+                  <p className="text-zinc-400 text-sm leading-relaxed mb-10 font-light hidden sm:block">
                     {item.desc}
                   </p>
                   <Link 
@@ -199,66 +193,65 @@ export default function Home() {
       </section>
 
       {/* --- 3. THE "PURE GLASS" STORE SECTION --- */}
-      <section ref={storeRef} className="py-48 px-6 bg-black relative overflow-hidden" style={{ perspective: "1000px" }}>
+      <section ref={storeRef} className="snap-start min-h-[100dvh] w-full flex flex-col justify-center py-16 md:py-24 px-4 sm:px-6 bg-black relative overflow-hidden" style={{ perspective: "1000px" }}>
         
-        {/* Dynamic Scroll-Linked Watermark */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
+        {/* Dynamic Scroll-Linked Watermark - Animated left to center */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
           <motion.h2 
             style={{
               rotate: storeRotate,
               x: storeX,
+              y: storeY,
               opacity: storeOpacity
             }}
-            className="font-oswald text-[23vw] font-black text-white/[0.07] uppercase leading-none"
+            className="font-oswald text-[35vw] md:text-[23vw] font-black text-white/[0.07] uppercase leading-none whitespace-nowrap"
           >
             STORE
           </motion.h2>
         </div>
 
-        <div className="container mx-auto relative z-10">
+        <div className="container mx-auto relative z-10 flex flex-col justify-center">
           <motion.div 
             variants={heavyDrop}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, margin: "-100px" }}
-            className="relative w-full rounded-[4rem] overflow-hidden bg-white/[0.01] border border-white/10 p-12 md:p-24 shadow-2xl"
+            viewport={{ once: false, margin: "-50px" }}
+            className="relative w-full rounded-[2rem] md:rounded-[3rem] lg:rounded-[4rem] overflow-hidden bg-white/[0.01] border border-white/10 p-6 md:p-16 lg:p-24 shadow-2xl"
           >
             
-            <div className="mb-20 text-center md:text-left">
+            <div className="mb-8 md:mb-12 lg:mb-20 text-center md:text-left">
               <motion.div variants={revealText} initial="hidden" whileInView="visible" viewport={{ once: false }}>
-                <div className="inline-flex items-center gap-3 bg-[#EA580C] text-black px-4 py-1.5 rounded-full mb-8">
-                  <ShoppingBag size={14} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Shop Official</span>
+                <div className="inline-flex items-center gap-2 md:gap-3 bg-[#EA580C] text-black px-3 md:px-4 py-1 md:py-1.5 rounded-full mb-4 md:mb-6">
+                  <ShoppingBag size={12} className="md:w-3.5 md:h-3.5" />
+                  <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest">Shop Official</span>
                 </div>
                 
+                {/* Mobile Friendly Text Sizing (text-5xl) + Safe Wrapping */}
                 <motion.h2 
                   variants={staggerTextContainer}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: false }}
-                  className="font-oswald text-5xl md:text-8xl font-black uppercase leading-[0.85] mb-10 block"
+                  className="font-oswald text-5xl sm:text-6xl md:text-8xl font-black uppercase leading-[1.1] md:leading-[0.85] mb-4 md:mb-6 flex flex-wrap justify-center md:justify-start gap-x-2 md:gap-x-4"
                 >
-                  <span className="inline-block">
-                    {"Spices, Sauces".split("").map((char, i) => (
-                      <motion.span 
-                        key={`spices-${i}`} 
-                        variants={letterFade} 
-                        className="inline-block bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent pb-2"
-                      >
-                        {char === " " ? "\u00A0" : char}
-                      </motion.span>
+                  <span className="inline-block whitespace-nowrap">
+                    {"Spices,".split("").map((char, i) => (
+                      <motion.span key={`spices-${i}`} variants={letterFade} className="inline-block bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent pb-1 md:pb-2">{char}</motion.span>
                     ))}
                   </span>
-                  <br />
-                  <span className="inline-block">
-                    {"& Accessories".split("").map((char, i) => (
-                      <motion.span 
-                        key={`acc-${i}`} 
-                        variants={letterFade} 
-                        className="inline-block bg-gradient-to-b from-[#EA580C] to-[#9a3412] bg-clip-text text-transparent pb-2"
-                      >
-                        {char === " " ? "\u00A0" : char}
-                      </motion.span>
+                  <span className="inline-block whitespace-nowrap">
+                    {"Sauces".split("").map((char, i) => (
+                      <motion.span key={`sauces-${i}`} variants={letterFade} className="inline-block bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent pb-1 md:pb-2">{char}</motion.span>
+                    ))}
+                  </span>
+                  <span className="inline-block whitespace-nowrap mt-1 md:mt-0">
+                    {"&".split("").map((char, i) => (
+                      <motion.span key={`and-${i}`} variants={letterFade} className="inline-block bg-gradient-to-b from-[#EA580C] to-[#9a3412] bg-clip-text text-transparent pb-1 md:pb-2">{char}</motion.span>
+                    ))}
+                  </span>
+                  <span className="inline-block whitespace-nowrap mt-1 md:mt-0">
+                    {"Accessories".split("").map((char, i) => (
+                      <motion.span key={`acc-${i}`} variants={letterFade} className="inline-block bg-gradient-to-b from-[#EA580C] to-[#9a3412] bg-clip-text text-transparent pb-1 md:pb-2">{char}</motion.span>
                     ))}
                   </span>
                 </motion.h2>
@@ -266,12 +259,13 @@ export default function Home() {
               </motion.div>
             </div>
 
+            {/* Restored Large Grid Boxes for Mobile */}
             <motion.div 
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: false }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
             >
               {[
                 { label: "Spices", icon: ChefHat },
@@ -282,14 +276,14 @@ export default function Home() {
                 <motion.div 
                   variants={heavyDrop}
                   key={idx} 
-                  className={`flex flex-col items-center justify-center p-14 rounded-[3.5rem] border transition-all duration-700 hover:scale-105 ${
+                  className={`flex flex-col items-center justify-center p-10 md:p-14 rounded-[2rem] md:rounded-[3.5rem] border transition-all duration-700 hover:scale-105 ${
                     item.color 
-                    ? `${item.color} shadow-[0_0_50px_rgba(234,88,12,0.3)]` 
+                    ? `${item.color} shadow-[0_0_20px_rgba(234,88,12,0.3)] md:shadow-[0_0_50px_rgba(234,88,12,0.3)]` 
                     : "bg-white/[0.05] border-white/10 hover:border-[#EA580C] hover:bg-white/[0.1]"
                   }`}
                 >
-                  <item.icon size={80} className={item.color ? "text-black" : "text-[#EA580C]"} />
-                  <span className="font-oswald text-3xl font-black uppercase mt-8 tracking-tighter text-center">
+                  <item.icon className={`w-12 h-12 md:w-20 md:h-20 ${item.color ? "text-black" : "text-[#EA580C]"}`} />
+                  <span className="font-oswald text-2xl sm:text-xl md:text-3xl font-black uppercase mt-4 md:mt-8 tracking-tighter text-center leading-tight">
                     {item.label}
                   </span>
                 </motion.div>
@@ -301,14 +295,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
               viewport={{ once: false }}
-              className="mt-20 flex justify-center md:justify-start"
+              className="mt-8 md:mt-12 lg:mt-20 flex justify-center md:justify-start"
             >
                <Link 
                   href="https://pitmaker.mybigcommerce.com/"
                   target="_blank"
-                  className="bg-white text-black px-16 py-6 rounded-full font-black uppercase text-xs tracking-[0.3em] hover:bg-[#EA580C] hover:text-white transition-all shadow-2xl flex items-center gap-3"
+                  className="bg-white text-black px-8 py-4 md:px-16 md:py-6 rounded-full font-black uppercase text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.3em] hover:bg-[#EA580C] hover:text-white transition-all shadow-xl md:shadow-2xl flex items-center gap-2 md:gap-3"
                 >
-                  Enter Official Store <ExternalLink size={18} />
+                  Enter Official Store <ExternalLink size={16} />
                 </Link>
             </motion.div>
           </motion.div>
