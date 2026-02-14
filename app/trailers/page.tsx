@@ -7,7 +7,7 @@ import { Truck, ChevronRight } from "lucide-react";
 // --- TRAILER INVENTORY DATA ---
 const SINGLE_AXLE = [
   {
-    id: "sgt-vault",
+    id: "sgt-vault-trailer",
     name: "SGT Vault Trailer",
     stock: "SGT-1-AXLE-VAULT",
     price: "$9,195",
@@ -15,7 +15,7 @@ const SINGLE_AXLE = [
     desc: "Single axle platform featuring the legendary insulated BBQ Vault."
   },
   {
-    id: "sgt-sniper",
+    id: "sgt-sniper-trailer",
     name: "SGT Sniper Trailer",
     stock: "SGT-1-AXLE-SNIPER",
     price: "$9,195",
@@ -23,7 +23,7 @@ const SINGLE_AXLE = [
     desc: "Single axle mobile offset smoker designed for precision draft control."
   },
   {
-    id: "lt-vault",
+    id: "lt-trailer-w-bbq-vault",
     name: "LT Trailer w/ BBQ Vault",
     stock: "LT-1-AXLE-VAULT",
     price: "$9,995",
@@ -31,7 +31,7 @@ const SINGLE_AXLE = [
     desc: "Upgraded LT-series chassis with integrated BBQ Vault smoker."
   },
   {
-    id: "lt-sniper",
+    id: "lt-trailer-sniper",
     name: "LT Trailer w/ Sniper",
     stock: "LT-1-AXLE-SNIPER",
     price: "$9,995",
@@ -42,7 +42,7 @@ const SINGLE_AXLE = [
 
 const DOUBLE_AXLE = [
   {
-    id: "cpt-custom",
+    id: "cpt-custom-bbq-trailer",
     name: "CPT Custom BBQ Trailer",
     stock: "CPT-2-AXLE",
     price: "$13,995.00",
@@ -50,7 +50,7 @@ const DOUBLE_AXLE = [
     desc: "Heavy-duty double axle custom rig for professional catering and competition."
   },
   {
-    id: "roof-awnings",
+    id: "cpt-bbq-trailer-roof-awnings",
     name: "Roof & Awnings Trailer",
     stock: "CPT-2-AXLE-W-RF",
     price: "$19,995.00",
@@ -66,7 +66,7 @@ const DOUBLE_AXLE = [
     desc: "One-of-one custom engineering built to your exact specifications."
   },
   {
-    id: "walk-on",
+    id: "walk-on-trailer",
     name: "Walk-On Trailer",
     stock: "PM-WALK-ON-BBQ-TRAILERS",
     price: "Call for Price",
@@ -167,7 +167,7 @@ function TrailerCard({ trailer }: { trailer: any }) {
             <span className="font-oswald text-xl font-bold text-white tracking-tight">{trailer.price}</span>
           </div>
           <Link 
-            href={`/products/${trailer.id}`}
+            href={`/${trailer.id}`}
             className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-[#EA580C] hover:text-black transition-all"
           >
             <ChevronRight size={18} />

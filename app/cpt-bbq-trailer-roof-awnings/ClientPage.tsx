@@ -127,7 +127,7 @@ export default function CPTRoofAwningsClient({ galleryImages }: { galleryImages:
         <div className="w-full lg:w-1/2 relative aspect-[4/3] rounded-[2.5rem] md:rounded-[3.5rem] bg-[#111111] border border-white/10 overflow-hidden shadow-2xl flex items-center justify-center p-8 group">
           <div className="absolute inset-0 bg-gradient-to-tr from-[#EA580C]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           <Image 
-            src="/images/CPT_Roof_Awnings.webp" // Optional Fallback Image Path
+            src="/images/Custom_Trailer_Roof.webp" // Optional Fallback Image Path
             alt="CPT BBQ Trailer - Roof & Awnings" 
             fill 
             className="object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] scale-95 group-hover:scale-105 transition-transform duration-700"

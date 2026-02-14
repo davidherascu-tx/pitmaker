@@ -48,19 +48,19 @@ const NAV_DATA: NavItemData[] = [
       {
         title: "Single Axle",
         items: [
-          { name: "SGT Vault Trailer", href: "/trailers/sgt-vault", image: "/images/SGT_Vault_Trailer.webp" }, 
-          { name: "SGT Sniper Trailer", href: "/trailers/sgt-sniper", image: "/images/SGT_Sniper_Trailer.webp" },
-          { name: "LT Trailer w/ BBQ Vault", href: "/trailers/lt-vault", image: "/images/LT_Trailer_BBQ_Vault.webp" },
-          { name: "LT Trailer w/ Sniper", href: "/trailers/lt-sniper", image: "/images/LT_Trailer_Sniper.webp" },
+          { name: "SGT Vault Trailer", href: "/sgt-vault-trailer", image: "/images/SGT_Vault_Trailer.webp" }, 
+          { name: "SGT Sniper Trailer", href: "/sgt-sniper-trailer", image: "/images/SGT_Sniper_Trailer.webp" },
+          { name: "LT Trailer w/ BBQ Vault", href: "/lt-trailer-w-bbq-vault", image: "/images/LT_Trailer_BBQ_Vault.webp" },
+          { name: "LT Trailer w/ Sniper", href: "/lt-trailer-sniper", image: "/images/LT_Trailer_Sniper.webp" },
         ]
       },
       {
         title: "Custom",
         items: [
-          { name: "CPT Custom BBQ Trailer", href: "/trailers/cpt-custom", badge: "Flagship", image: "/images/CPT_BBQ_Trailer.webp" },
-          { name: "CPT Trailer - Roof & Awnings", href: "/trailers/cpt-roof", image: "/images/Custom_Trailer_Roof.webp" },
-          { name: "Walk-On Trailer", href: "/trailers/walk-on", image: "/images/Dodge-City.webp" },
-          { name: "Custom Built", href: "/trailers/custom", image: "/images/Diet-Mt-Dew.webp" },
+          { name: "CPT Custom BBQ Trailer", href: "/cpt-custom-bbq-trailer", badge: "Flagship", image: "/images/CPT_BBQ_Trailer.webp" },
+          { name: "CPT Trailer - Roof & Awnings", href: "/cpt-bbq-trailer-roof-awnings", image: "/images/Custom_Trailer_Roof.webp" },
+          { name: "Walk-On Trailer", href: "/walk-on-trailer", image: "/images/Dodge-City.webp" },
+          { name: "Custom Built", href: "/custom-built", image: "/images/Diet-Mt-Dew.webp" },
         ]
       }
     ]

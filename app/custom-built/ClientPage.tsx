@@ -73,7 +73,7 @@ export default function CustomBuiltClient({ galleryImages }: { galleryImages: st
         <div className="w-full lg:w-1/2 relative aspect-[4/3] rounded-[2.5rem] md:rounded-[3.5rem] bg-[#111111] border border-white/10 overflow-hidden shadow-2xl flex items-center justify-center p-8 group">
           <div className="absolute inset-0 bg-gradient-to-tr from-[#EA580C]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           <Image 
-            src="/images/Custom_Built_Trailer.webp" // Optional Fallback Image Path
+            src="/images/Diet-Mt-Dew.webp" // Optional Fallback Image Path
             alt="Pitmaker Custom Built Trailer" 
             fill 
             className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
