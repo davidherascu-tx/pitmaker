@@ -357,7 +357,7 @@ export default function Navbar() {
                <div className="flex min-h-[400px]">
                  
                  {/* Links */}
-                 <div className="w-[60%] p-10 bg-[#050505]">
+                 <div className="w-[60%] p-10 bg-[#050505] z-10">
                     <div className="animate-in fade-in slide-in-from-left-4 duration-500">
                        <div className="flex items-center gap-3 mb-8">
                           {activeData.icon && <activeData.icon className="text-[#EA580C]" size={24} />}
@@ -404,9 +404,8 @@ export default function Navbar() {
                     </div>
                  </div>
 
-                 {/* Preview */}
-                 <div className="w-[40%] relative overflow-hidden flex flex-col justify-end border-l border-zinc-900 group/image">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${activeData.imageColor} to-black opacity-50 z-10`} />
+                 {/* Preview (No Overlay, Text inside SMALL Glass Box) */}
+                 <div className="w-[40%] relative overflow-hidden flex flex-col justify-end border-l border-zinc-900 group/image p-6">
                     
                     {currentImage ? (
                        <div className="absolute inset-0 transition-all duration-700 ease-in-out transform scale-105 group-hover/image:scale-100">
@@ -414,25 +413,26 @@ export default function Navbar() {
                              src={currentImage} 
                              alt="Preview" 
                              fill 
-                             className="object-cover opacity-60 mix-blend-overlay"
+                             className="object-cover" 
                           />
                        </div>
                     ) : (
-                       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                       <div className="absolute inset-0 bg-zinc-900" />
                     )}
                     
-                    <div className="relative z-20 p-10">
-                       <div className="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-full mb-4 shadow-lg">
-                          <span className="text-[10px] text-black uppercase font-bold tracking-widest">
+                    {/* Compact Glass Text Box */}
+                    <div className="relative z-20 mt-auto p-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 shadow-xl self-start">
+                       <div className="inline-flex items-center gap-1.5 bg-white px-2 py-0.5 rounded-full mb-2 shadow-sm">
+                          <span className="text-[9px] text-black uppercase font-bold tracking-widest">
                              {currentBadge}
                           </span>
                        </div>
                        
-                       <h2 className="text-4xl font-oswald font-black text-white uppercase leading-none mb-4 transition-all duration-300">
+                       <h2 className="text-2xl font-oswald font-black text-white uppercase leading-none mb-2 transition-all duration-300 drop-shadow-md">
                          {currentTitle}
                        </h2>
                        
-                       <Link href="/gallery" className="text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-[#EA580C] transition-colors flex items-center gap-2">
+                       <Link href="/gallery" className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-1.5">
                           View Full Specs <ArrowRight className="w-3 h-3" />
                        </Link>
                     </div>

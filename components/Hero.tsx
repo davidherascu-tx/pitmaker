@@ -122,7 +122,6 @@ export default function Hero() {
         return (
           <div key={slide.id} className={`absolute inset-0 w-full h-full pointer-events-none ${isActive ? "z-10" : "z-0"}`}>
             <div className="absolute inset-0 overflow-hidden bg-[#0a0a0a]">
-               {/* PROFESSIONAL TRANSITION: Replaced blur with crossfade and scale */}
                <Image 
                  src={slide.image} 
                  alt={slide.title} 
@@ -141,7 +140,7 @@ export default function Hero() {
                 variants={slideContainerVariants}
                 initial="hidden"
                 animate={isActive ? "visible" : "hidden"}
-                className="w-full md:w-fit max-w-7xl bg-black/40 backdrop-blur-md border border-white/10 p-6 md:p-12 rounded-3xl shadow-2xl pointer-events-auto"
+                className="w-full max-w-7xl pointer-events-auto"
               >
                 {/* 1. SUBTITLE */}
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-4">
@@ -159,7 +158,7 @@ export default function Hero() {
                     </span>
                 </div>
                 
-                {/* 2. TITLE (Letter-by-Letter + Gradient) */}
+                {/* 2. TITLE */}
                 <h1 className="font-oswald font-black text-5xl sm:text-6xl md:text-8xl uppercase leading-[1.1] md:leading-none mb-4 md:mb-6 drop-shadow-xl flex flex-wrap gap-x-2 md:gap-x-4">
                    {slide.title.split(" ").map((word, wIdx) => (
                        <span key={`word-${wIdx}`} className="inline-block whitespace-nowrap">
@@ -177,7 +176,7 @@ export default function Hero() {
                 </h1>
                 
                 {/* 3. DESCRIPTION */}
-                <p className="text-zinc-200 text-sm md:text-xl font-light leading-relaxed mb-6 md:mb-8 max-w-2xl">
+                <p className="text-zinc-200 text-sm md:text-xl font-light leading-relaxed mb-6 md:mb-8 max-w-2xl drop-shadow-md">
                   {slide.description.split(" ").map((word, i) => (
                     <motion.span key={`desc-${i}`} variants={textItemVariants} className="inline-block mr-[0.3em] mb-1">
                       {word}
@@ -191,7 +190,7 @@ export default function Hero() {
                     <span className="relative z-10 flex items-center gap-2">{slide.cta} <ArrowRight size={16} className="md:w-[18px] md:h-[18px]" /></span>
                     <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-500 bg-white/40 skew-x-12" />
                   </Link>
-                  <Link href="/contact" className="bg-transparent border border-white/30 text-white px-6 py-3 md:px-10 md:py-4 rounded-full font-bold uppercase tracking-widest text-xs md:text-sm hover:bg-white hover:text-black transition-colors">Get Quote</Link>
+                  <Link href="/contact" className="bg-transparent border border-white/30 text-white px-6 py-3 md:px-10 md:py-4 rounded-full font-bold uppercase tracking-widest text-xs md:text-sm hover:bg-white hover:text-black transition-colors backdrop-blur-sm">Get Quote</Link>
                 </motion.div>
 
               </motion.div>
