@@ -38,6 +38,7 @@ const NAV_DATA: NavItemData[] = [
   {
     id: "trailers",
     label: "Trailers",
+    href: "/trailers",           // ADDED: Direct link to Trailers page
     type: "mega",
     icon: Truck,
     description: "Custom built mobile pits ranging from single axle to massive commercial rigs.",
@@ -68,6 +69,7 @@ const NAV_DATA: NavItemData[] = [
   {
     id: "smokers",
     label: "Smokers",
+    href: "/smokers",            // ADDED: Direct link to Smokers page
     type: "mega",
     icon: Flame,
     description: "The ultimate arsenal of handcrafted insulated smokers.",
@@ -94,11 +96,11 @@ const NAV_DATA: NavItemData[] = [
       {
         title: "Core Models",
         items: [
-          { name: "Vault", href: "/vault-smoker", badge: "Iconic", image: "/images/smoker_vault.webp" },
+          { name: "Vault", href: "/vault", badge: "Iconic", image: "/images/smoker_vault.webp" },
           { name: "Revolver", href: "/revolver", image: "/images/smoker_revolver.webp" },
           { name: "Hitman", href: "/hitman", image: "/images/smoker_hitman.webp" },
           { name: "Edge", href: "/edge", image: "/images/smoker_edge.webp" },
-          { name: "PM AR-20 Pellet", href: "/pm-ar-20-pellet", image: "/images/smoker_pellet.webp" },
+          { name: "PM AR-20 Pellet", href: "/pellet", image: "/images/smoker_pellet.webp" },
         ]
       }
     ]
@@ -106,6 +108,7 @@ const NAV_DATA: NavItemData[] = [
   {
     id: "grills",
     label: "Grills",
+    href: "/grills",             // ADDED: Direct link to Grills page
     type: "mega",
     icon: Warehouse,
     description: "Heavy-duty charcoal grilling systems for the perfect sear.",
@@ -131,7 +134,7 @@ const NAV_DATA: NavItemData[] = [
   },
   {
     id: "more",
-    label: "More",
+    label: "More",               // Note: 'More' stays a dropdown button without a direct link
     type: "dropdown",
     sections: [
       {
@@ -263,7 +266,8 @@ export default function Navbar() {
                   }
                 }}
               >
-                  {item.type === 'link' ? (
+                  {/* Standard Link */}
+                  {item.type === 'link' && (
                     <Link 
                       href={item.href || '#'}
                       className="block px-3 lg:px-4 py-2.5 font-bold uppercase tracking-[0.15em] text-sm text-zinc-200 hover:text-white transition-all duration-300 relative group"
@@ -271,14 +275,32 @@ export default function Navbar() {
                       {item.label}
                       <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#EA580C] transition-all duration-300 group-hover:w-1/2 shadow-[0_0_8px_#EA580C]" />
                     </Link>
-                  ) : (
-                    <button 
-                      className={`flex items-center gap-2 px-3 lg:px-4 py-2.5 font-bold uppercase tracking-[0.15em] text-sm transition-all duration-300
+                  )}
+
+                  {/* Mega Menu / Dropdown Link WITH Href */}
+                  {(item.type === 'mega' || item.type === 'dropdown') && item.href && (
+                    <Link 
+                      href={item.href}
+                      className={`flex items-center gap-2 px-3 lg:px-4 py-2.5 font-bold uppercase tracking-[0.15em] text-sm transition-all duration-300 relative group
                       ${activeMenu === item.id ? 'text-[#EA580C] drop-shadow-[0_0_8px_rgba(234,88,12,0.8)]' : 'text-zinc-200 hover:text-white'}
                       `}
                     >
                       {item.label}
                       <ChevronDown className={`w-3 h-3 transition-transform duration-500 ${activeMenu === item.id ? 'rotate-180' : ''}`} />
+                      <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 h-[2px] bg-[#EA580C] transition-all duration-300 shadow-[0_0_8px_#EA580C] ${activeMenu === item.id ? 'w-1/2' : 'w-0 group-hover:w-1/2'}`} />
+                    </Link>
+                  )}
+
+                  {/* Mega Menu / Dropdown WITHOUT Href (e.g. "More") */}
+                  {(item.type === 'mega' || item.type === 'dropdown') && !item.href && (
+                    <button 
+                      className={`flex items-center gap-2 px-3 lg:px-4 py-2.5 font-bold uppercase tracking-[0.15em] text-sm transition-all duration-300 relative group
+                      ${activeMenu === item.id ? 'text-[#EA580C] drop-shadow-[0_0_8px_rgba(234,88,12,0.8)]' : 'text-zinc-200 hover:text-white'}
+                      `}
+                    >
+                      {item.label}
+                      <ChevronDown className={`w-3 h-3 transition-transform duration-500 ${activeMenu === item.id ? 'rotate-180' : ''}`} />
+                      <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 h-[2px] bg-[#EA580C] transition-all duration-300 shadow-[0_0_8px_#EA580C] ${activeMenu === item.id ? 'w-1/2' : 'w-0 group-hover:w-1/2'}`} />
                     </button>
                   )}
 
@@ -465,6 +487,8 @@ export default function Navbar() {
            <div className="px-8 pt-10 pb-20 flex flex-col gap-6">
               {NAV_DATA.map((item) => (
                  <div key={item.id} className="w-full border-b border-zinc-900 pb-4">
+                    
+                    {/* STANDARD MOBILE LINK */}
                     {item.type === 'link' && (
                        <Link 
                         href={item.href || '#'} 
@@ -475,18 +499,36 @@ export default function Navbar() {
                        </Link>
                     )}
 
+                    {/* MOBILE MEGA/DROPDOWN WITH ACCORDION */}
                     {(item.type === 'mega' || item.type === 'dropdown') && (
                        <div className="flex flex-col">
-                          <button 
-                             onClick={() => toggleMobileAccordion(item.id)}
-                             className="w-full flex justify-between items-center text-2xl font-oswald text-white uppercase hover:text-[#EA580C] transition-colors py-2"
-                          >
-                             <span className="flex items-center gap-3">
-                               {item.icon && <item.icon size={22} className="text-[#EA580C]" />}
-                               {item.label}
-                             </span>
-                             <ChevronDown className={`w-6 h-6 transition-transform duration-300 ${expandedMobileItem === item.id ? 'rotate-180' : ''}`} />
-                          </button>
+                          <div className="w-full flex justify-between items-center py-2">
+                             
+                             {/* Clickable Header Link (if href exists) */}
+                             {item.href ? (
+                               <Link 
+                                 href={item.href} 
+                                 className="flex items-center gap-3 text-2xl font-oswald text-white uppercase hover:text-[#EA580C] transition-colors"
+                                 onClick={() => setIsMobileOpen(false)}
+                               >
+                                 {item.icon && <item.icon size={22} className="text-[#EA580C]" />}
+                                 {item.label}
+                               </Link>
+                             ) : (
+                               <span className="flex items-center gap-3 text-2xl font-oswald text-white uppercase">
+                                 {item.icon && <item.icon size={22} className="text-[#EA580C]" />}
+                                 {item.label}
+                               </span>
+                             )}
+
+                             {/* Accordion Expand Button */}
+                             <button 
+                                onClick={() => toggleMobileAccordion(item.id)}
+                                className="p-2 text-zinc-400 hover:text-[#EA580C] border border-zinc-800 rounded-md ml-4"
+                             >
+                                <ChevronDown className={`w-6 h-6 transition-transform duration-300 ${expandedMobileItem === item.id ? 'rotate-180' : ''}`} />
+                             </button>
+                          </div>
 
                           <div 
                               className={`w-full overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out
@@ -502,10 +544,11 @@ export default function Navbar() {
                                             <li key={subIdx}>
                                                <Link 
                                                  href={sub.href} 
-                                                 className="text-lg text-zinc-400 hover:text-white font-bold uppercase"
+                                                 className="text-lg text-zinc-400 hover:text-white font-bold uppercase flex items-center gap-2"
                                                  onClick={() => setIsMobileOpen(false)}
                                                >
                                                   {sub.name}
+                                                  {sub.external && <ExternalLink size={14} className="opacity-50" />}
                                                </Link>
                                             </li>
                                          ))}
