@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import { Facebook, Instagram, Youtube } from "lucide-react";
 
 export default function Footer() {
@@ -9,17 +11,33 @@ export default function Footer() {
           
           {/* Column 1: Brand */}
           <div className="col-span-1 md:col-span-1">
-            <h2 className="text-2xl font-oswald font-bold text-white uppercase tracking-tighter mb-6">
-              PIT<span className="text-orange-600">MAKER</span>
-            </h2>
+            <Link href="/" className="block relative w-48 h-12 mb-6 transition-transform hover:opacity-80">
+              <Image 
+                src="/pitmaker_black_logo.webp" 
+                alt="Pitmaker Logo" 
+                fill
+                className="object-contain brightness-0 invert"
+              />
+            </Link>
             <p className="text-sm leading-relaxed mb-6 text-zinc-500">
               Creating new BBQ Grill & Smoker designs that are cutting edge & more durable than anything on the market.
             </p>
             <div className="flex gap-4">
-               {/* Social placeholders */}
-               <div className="w-10 h-10 bg-zinc-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors cursor-pointer"><Facebook size={18} /></div>
-               <div className="w-10 h-10 bg-zinc-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors cursor-pointer"><Instagram size={18} /></div>
-               <div className="w-10 h-10 bg-zinc-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors cursor-pointer"><Youtube size={18} /></div>
+               <a href="https://www.facebook.com/Pitmaker.BBQ" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-[#EA580C] hover:text-black transition-colors">
+                 <Facebook size={18} />
+               </a>
+               <a href="https://x.com/Pitmaker" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-[#EA580C] hover:text-black transition-colors">
+                 {/* Custom X (Twitter) Icon SVG */}
+                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 5.936H5.078z"/>
+                 </svg>
+               </a>
+               <a href="https://www.instagram.com/pitmaker1/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-[#EA580C] hover:text-black transition-colors">
+                 <Instagram size={18} />
+               </a>
+               <a href="https://www.youtube.com/channel/UCD38Eu7dT-G5TqF5GkMDYRg" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center hover:bg-[#EA580C] hover:text-black transition-colors">
+                 <Youtube size={18} />
+               </a>
             </div>
           </div>
 
@@ -27,10 +45,20 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-bold uppercase tracking-wider mb-6 text-sm">Products</h3>
             <ul className="space-y-3 text-sm">
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">BBQ Trailers1</li>
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">Vault Smokers</li>
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">Hitman Grills</li>
-              <li className="hover:text-orange-500 cursor-pointer transition-colors">Accessories</li>
+              <li>
+                <Link href="/trailers" className="hover:text-[#EA580C] transition-colors">BBQ Trailers</Link>
+              </li>
+              <li>
+                <Link href="/smokers" className="hover:text-[#EA580C] transition-colors">BBQ Smokers</Link>
+              </li>
+              <li>
+                <Link href="/grills" className="hover:text-[#EA580C] transition-colors">BBQ Grills</Link>
+              </li>
+              <li>
+                <Link href="https://pitmaker.mybigcommerce.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#EA580C] transition-colors flex items-center gap-2">
+                  BBQ Accessories
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -44,13 +72,15 @@ export default function Footer() {
               </li>
               <li className="flex flex-col">
                 <span className="text-zinc-600 text-xs uppercase font-bold">Phone</span>
-                <span className="text-orange-500 font-bold text-lg">(281) 359-7487</span>
+                <a href="tel:2813597487" className="text-[#EA580C] font-bold text-lg hover:opacity-80 transition-opacity">
+                  (281) 359-7487
+                </a>
               </li>
             </ul>
           </div>
 
           {/* Column 4: Hours */}
-          <div className="bg-zinc-900/50 p-6 border border-zinc-800">
+          <div className="bg-zinc-900/50 p-6 border border-zinc-800 rounded-2xl">
             <h3 className="text-white font-bold uppercase tracking-wider mb-4 text-sm border-b border-zinc-700 pb-2">Open Hours</h3>
             <ul className="space-y-3 text-sm">
               <li className="flex justify-between">
@@ -73,9 +103,12 @@ export default function Footer() {
       
       {/* Sub Footer */}
       <div className="border-t border-zinc-900 bg-zinc-950 py-6">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-zinc-600 uppercase tracking-wider">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-zinc-600 uppercase tracking-wider gap-4 md:gap-0">
           <p>&copy; {new Date().getFullYear()} Pitmaker. Handcrafted in Texas.</p>
-          <p>Privacy Policy</p>
+          <div className="flex gap-6">
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+          </div>
         </div>
       </div>
     </footer>

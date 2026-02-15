@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,7 +9,6 @@ import {
   Flame, Zap, Music, ArrowRight, Camera, Plus, X, ChevronLeft, ChevronRight, MonitorPlay, Maximize
 } from "lucide-react";
 
-// --- 1. CPT CUSTOM TRAILER DATA ---
 const BASE_PRICE = 13995;
 const STOCK_NUMBER = "CPT-2-AXLE"; 
 
@@ -24,7 +23,7 @@ const STANDARD_FEATURES = [
   "Mounted with single PM-BBQ-Vault (or PM-48-SNIPER Smoker).",
   "Two Stainless Steel Food Preparation Tables with Lockable Dry Storage (Up to 58″ L x 30″).",
   "Custom Color Paint Choice! Any standard color from our color chart (Includes Zinc Epoxy Primer).",
-  "Custom Reinforced Trailer made with 3” x 2” x 3/16” Thick Steel Tubing, heavily reinforced with secondary rail and corner braces.",
+  "Custom Reinforced Trailer made with 3” x 2” x 3/16” Thick Steel Tubing.",
   "“Bull Dog” Style Hitch with Electric Brakes.",
   "LED Taillights w/ fully enclosed wiring and reinforced solid steel tube bracket.",
   "16″ Wheels Standard (choice of alloy and custom finish wheels available)."
@@ -48,7 +47,7 @@ const CUSTOM_OPTIONS = [
   { id: "magnum-sniper", label: "Add a Magnum Sniper Smoker", price: 5795, icon: Flame, desc: "Add the massive Magnum Sniper with insulated firebox." },
   { id: "electrical", label: "Electrical Conduit on Frame", price: 550, icon: Zap, desc: "Fully integrated wiring with 3 all-weather outdoor power outlets." },
   { id: "stereo", label: "Marine Outdoor Stereo w/ Speakers", price: 1200, icon: Music, desc: "Marine-grade CD/Player stereo system with built-in speakers." },
-  { id: "media-wall", label: "Media Wall (TV Mounts & Wiring)", price: 4200, icon: MonitorPlay, desc: "Includes Two TV Mounts, Digital HD Antenna, install and wiring. (Does not include TVs or Dish)." },
+  { id: "media-wall", label: "Media Wall (TV Mounts & Wiring)", price: 4200, icon: MonitorPlay, desc: "Includes Two TV Mounts, Digital HD Antenna, install and wiring." },
   { id: "roof-awning", label: "Roof & Fold-Up Awning Setup", price: 6000, icon: ShieldCheck, desc: "Massive custom roof and fold-up awnings for all-weather cooking." }
 ];
 
@@ -61,13 +60,11 @@ export default function CPTCustomClient({ galleryImages }: { galleryImages: stri
     setSelectedOptions(prev => {
       const next = { ...prev, [id]: !prev[id] };
       
-      // Handle mutually exclusive grills
       if (id === "30-meister" && next["30-meister"]) { next["ss-30-meister"] = false; }
       if (id === "ss-30-meister" && next["ss-30-meister"]) { next["30-meister"] = false; }
       if (id === "48-meister" && next["48-meister"]) { next["ss-48-meister"] = false; }
       if (id === "ss-48-meister" && next["ss-48-meister"]) { next["48-meister"] = false; }
 
-      // Handle mutually exclusive extra smokers (usually they only have room for one extra big pit)
       if (id === "extra-vault" && next["extra-vault"]) { next["short-sniper"] = false; next["long-rifle"] = false; next["magnum-sniper"] = false; }
       if (id === "short-sniper" && next["short-sniper"]) { next["extra-vault"] = false; next["long-rifle"] = false; next["magnum-sniper"] = false; }
       if (id === "long-rifle" && next["long-rifle"]) { next["extra-vault"] = false; next["short-sniper"] = false; next["magnum-sniper"] = false; }
@@ -119,20 +116,38 @@ export default function CPTCustomClient({ galleryImages }: { galleryImages: stri
     }
   };
 
+  // Keyboard navigation hook for Lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return;
+      if (e.key === "ArrowRight") {
+        setLightboxIndex((prev) => (prev !== null && galleryImages.length > 0 ? (prev + 1) % galleryImages.length : null));
+      }
+      if (e.key === "ArrowLeft") {
+        setLightboxIndex((prev) => (prev !== null && galleryImages.length > 0 ? (prev === 0 ? galleryImages.length - 1 : prev - 1) : null));
+      }
+      if (e.key === "Escape") {
+        closeLightbox();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxIndex, galleryImages.length]);
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] selection:bg-[#EA580C] pt-24 pb-48 font-sans">
       
       {/* --- HERO SECTION --- */}
       <section className="relative container mx-auto px-6 py-12 md:py-20 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
-        <div className="w-full lg:w-1/2 relative aspect-[4/3] rounded-[2.5rem] md:rounded-[3.5rem] bg-[#111111] border border-white/10 overflow-hidden shadow-2xl flex items-center justify-center p-8 group">
-          <div className="absolute inset-0 bg-gradient-to-tr from-[#EA580C]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-<Image 
-    src="/images/CPT_BBQ_Trailer.webp" 
-    alt="CPT Custom BBQ Trailer" 
-    fill 
-    className="object-cover opacity-90 group-hover:opacity-100 scale-100 group-hover:scale-110 transition-transform duration-700"
-    priority
-  />
+        <div className="w-full lg:w-1/2 relative aspect-[4/3] rounded-[2.5rem] md:rounded-[3.5rem] bg-[#111111] border border-white/10 overflow-hidden shadow-2xl group">
+          <div className="absolute inset-0 bg-gradient-to-tr from-[#EA580C]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none" />
+          <Image 
+            src="/images/CPT_BBQ_Trailer.webp" 
+            alt="CPT Custom BBQ Trailer" 
+            fill 
+            className="object-cover opacity-90 group-hover:opacity-100 scale-100 group-hover:scale-110 transition-transform duration-700"
+            priority
+          />
         </div>
 
         <div className="w-full lg:w-1/2 flex flex-col justify-center">
@@ -142,7 +157,7 @@ export default function CPTCustomClient({ galleryImages }: { galleryImages: stri
                <Truck size={14} />
                <span className="text-[10px] font-black uppercase tracking-widest">Double Axle Series</span>
             </div>
-            {/* GRAY BACKGROUND, BLACK TEXT, NO ICON, NO ORANGE */}
+            {/* GRAY BACKGROUND, BLACK TEXT, NO ORANGE */}
             <div className="inline-flex items-center gap-2 border border-zinc-400 bg-zinc-300 text-black px-5 py-2 rounded-full shadow-lg">
                <span className="text-sm font-bold uppercase tracking-widest">Stock #: {STOCK_NUMBER}</span>
             </div>
@@ -322,7 +337,7 @@ export default function CPTCustomClient({ galleryImages }: { galleryImages: stri
                       className="object-cover opacity-80 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700" 
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-[#EA580C]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                       <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center border border-white/20 text-white">
+                       <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center border border-white/20 text-white">
                           <Plus size={32} />
                        </div>
                     </div>
@@ -340,17 +355,18 @@ export default function CPTCustomClient({ galleryImages }: { galleryImages: stri
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeLightbox}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 md:p-12"
+            className="fixed inset-0 w-screen h-screen z-[9999] flex items-center justify-center p-4 md:p-12"
+            style={{ backgroundColor: "#2A2C2C" }} /* SPECIFIC HEX COLOR BACKGROUND */
           >
-             <button onClick={closeLightbox} className="absolute top-6 right-6 md:top-10 md:right-10 text-white/50 hover:text-white transition-colors z-50 bg-black/50 p-3 rounded-full border border-white/10">
+             <button onClick={closeLightbox} className="absolute top-6 right-6 md:top-10 md:right-10 text-white hover:text-[#EA580C] transition-colors z-50 bg-black/50 p-3 rounded-full border border-white/10 shadow-lg">
                 <X size={24} />
              </button>
              
-             <button onClick={prevImage} className="absolute left-4 md:left-10 text-white/50 hover:text-[#EA580C] hover:scale-110 transition-all z-50 bg-black/50 p-4 rounded-full border border-white/10">
+             <button onClick={prevImage} className="absolute left-4 md:left-10 text-white hover:text-[#EA580C] hover:scale-110 transition-all z-50 bg-black/50 p-4 rounded-full border border-white/10 shadow-lg">
                 <ChevronLeft size={32} />
              </button>
              
-             <button onClick={nextImage} className="absolute right-4 md:right-10 text-white/50 hover:text-[#EA580C] hover:scale-110 transition-all z-50 bg-black/50 p-4 rounded-full border border-white/10">
+             <button onClick={nextImage} className="absolute right-4 md:right-10 text-white hover:text-[#EA580C] hover:scale-110 transition-all z-50 bg-black/50 p-4 rounded-full border border-white/10 shadow-lg">
                 <ChevronRight size={32} />
              </button>
 
@@ -361,13 +377,14 @@ export default function CPTCustomClient({ galleryImages }: { galleryImages: stri
                exit={{ opacity: 0, scale: 0.95 }}
                transition={{ duration: 0.3 }}
                className="relative w-full h-full max-w-6xl max-h-[80vh] flex items-center justify-center"
+               style={{ filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.9))" }} /* BULLETPROOF DROP SHADOW */
                onClick={(e) => e.stopPropagation()}
              >
                 <Image 
                   src={galleryImages[lightboxIndex]} 
                   alt="Gallery Fullscreen" 
                   fill 
-                  className="object-contain drop-shadow-2xl" 
+                  className="object-contain" 
                 />
              </motion.div>
           </motion.div>

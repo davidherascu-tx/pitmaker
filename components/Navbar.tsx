@@ -78,27 +78,27 @@ const NAV_DATA: NavItemData[] = [
       {
         title: "Sniper Series",
         items: [
-          { name: "Short Sniper", href: "/smokers/short-sniper", image: "/images/smoker_short_sniper.webp" },
-          { name: "Long Rifle Sniper", href: "/smokers/long-rifle", image: "/images/smoker_long_rifle_sniper.webp" },
-          { name: "Magnum Sniper", href: "/smokers/magnum", image: "/images/smoker_magnum_sniper.webp" },
+          { name: "Short Sniper", href: "/short-sniper", image: "/images/smoker_short_sniper.webp" },
+          { name: "Long Rifle Sniper", href: "/long-rifle-sniper", image: "/images/smoker_long_rifle_sniper.webp" },
+          { name: "Magnum Sniper", href: "/magnum-sniper", image: "/images/smoker_magnum_sniper.webp" },
         ]
       },
       {
         title: "Safe Series",
         items: [
-          { name: "Safe w/ Wheels", href: "/smokers/safe-wheels", image: "/images/smokers_safe_w_wheels.webp" },
-          { name: "Safe w/ Cart", href: "/smokers/safe-cart", image: "/images/smoker_safe_w_cart.webp" },
-          { name: "Safe/Grill-Meister Combo", href: "/smokers/safe-combo", badge: "Combo", image: "/images/smoker_safe_grill.webp" },
+          { name: "Safe w/ Wheels", href: "/safe-w-wheels", image: "/images/smokers_safe_w_wheels.webp" },
+          { name: "Safe w/ Cart", href: "/safe-w-cart", image: "/images/smoker_safe_w_cart.webp" },
+          { name: "Safe/Grill-Meister Combo", href: "/safe-grill-meister-combo", badge: "Combo", image: "/images/smoker_safe_grill.webp" },
         ]
       },
       {
         title: "Core Models",
         items: [
-          { name: "Vault", href: "/smokers/vault", badge: "Iconic", image: "/images/smoker_vault.webp" },
-          { name: "Revolver", href: "/smokers/revolver", image: "/images/smoker_revolver.webp" },
-          { name: "Hitman", href: "/smokers/hitman", image: "/images/smoker_hitman.webp" },
-          { name: "Edge", href: "/smokers/edge", image: "/images/smoker_edge.webp" },
-          { name: "PM AR-20 Pellet", href: "/smokers/pellet", image: "/images/smoker_pellet.webp" },
+          { name: "Vault", href: "/vault-smoker", badge: "Iconic", image: "/images/smoker_vault.webp" },
+          { name: "Revolver", href: "/revolver", image: "/images/smoker_revolver.webp" },
+          { name: "Hitman", href: "/hitman", image: "/images/smoker_hitman.webp" },
+          { name: "Edge", href: "/edge", image: "/images/smoker_edge.webp" },
+          { name: "PM AR-20 Pellet", href: "/pm-ar-20-pellet", image: "/images/smoker_pellet.webp" },
         ]
       }
     ]
@@ -116,15 +116,15 @@ const NAV_DATA: NavItemData[] = [
       {
         title: "Grill-Meister Series",
         items: [
-          { name: "30\" Grill-Meister", href: "/grills/30-meister", image: "/images/grill_30_grill_meister.webp" },
-          { name: "48\" Grill-Meister", href: "/grills/48-meister", badge: "XL", image: "/images/grill_48_grill_meister.webp" },
+          { name: "30\" Grill-Meister", href: "/30-adjustable-charcoal-grill", image: "/images/grill_30_grill_meister.webp" },
+          { name: "48\" Grill-Meister", href: "/grill-meister-adjustable-charcoal-grill", badge: "XL", image: "/images/grill_48_grill_meister.webp" },
         ]
       },
       {
         title: "Performance",
         items: [
-          { name: "MVP Tailgate Grill", href: "/grills/mvp", image: "/images/grill_mvp_tailgate.webp" },
-          { name: "Carbon-Q", href: "/grills/carbon-q", image: "/images/grill_carbon_q.webp" },
+          { name: "MVP Tailgate Grill", href: "/mvp-tailgate-grill", image: "/images/grill_mvp_tailgate.webp" },
+          { name: "Carbon-Q", href: "/carbon-q", image: "/images/grill_carbon_q.webp" },
         ]
       }
     ]
@@ -137,7 +137,7 @@ const NAV_DATA: NavItemData[] = [
       {
         title: "Company",
         items: [
-          { name: "About Us", href: "/about" },
+          { name: "About Us", href: "/about-us" },
           { name: "Spices / Accessories Store", href: "https://pitmaker.mybigcommerce.com/", external: true },
         ]
       }
@@ -244,7 +244,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* --- DESKTOP NAV LINKS (CENTER PILL - LIGHTER GLASS) --- */}
+          {/* --- DESKTOP NAV LINKS --- */}
           <div className={`hidden xl:flex items-center gap-1 h-12 px-2 rounded-full transition-all duration-[800ms]
              ${!scrolled 
                 ? "bg-white/10 border border-white/20 backdrop-blur-md shadow-2xl" 
@@ -404,9 +404,8 @@ export default function Navbar() {
                     </div>
                  </div>
 
-                 {/* Preview (No Overlay, Text inside SMALL Glass Box) */}
+                 {/* Preview */}
                  <div className="w-[40%] relative overflow-hidden flex flex-col justify-end border-l border-zinc-900 group/image p-6">
-                    
                     {currentImage ? (
                        <div className="absolute inset-0 transition-all duration-700 ease-in-out transform scale-105 group-hover/image:scale-100">
                           <Image 
@@ -420,7 +419,6 @@ export default function Navbar() {
                        <div className="absolute inset-0 bg-zinc-900" />
                     )}
                     
-                    {/* Compact Glass Text Box */}
                     <div className="relative z-20 mt-auto p-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 shadow-xl self-start">
                        <div className="inline-flex items-center gap-1.5 bg-white px-2 py-0.5 rounded-full mb-2 shadow-sm">
                           <span className="text-[9px] text-black uppercase font-bold tracking-widest">

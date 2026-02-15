@@ -63,7 +63,6 @@ const staggerContainer: Variants = {
   }
 };
 
-// --- TEXT STAGGER VARIANTS (No blur, 100% crisp) ---
 const staggerTextContainer: Variants = {
   hidden: { opacity: 1 },
   visible: {
@@ -85,19 +84,14 @@ const letterFade: Variants = {
 };
 
 export default function Home() {
-  // --- SCROLL ANIMATION HOOKS FOR THE STORE SECTION ---
   const storeRef = useRef<HTMLElement>(null);
   
   const { scrollYProgress } = useScroll({
     target: storeRef,
-    // Tracks progress as soon as section enters from bottom, until it snaps to top
     offset: ["start end", "start start"] 
   });
 
-  // STORE Text Animation Maps
-  // Starts rotated 90 degrees (on its side), finishes flat at 0 degrees
   const storeRotate = useTransform(scrollYProgress, [0, 1], [90, 0]);
-  // Starts off-screen to the right, ends perfectly centered
   const storeX = useTransform(scrollYProgress, [0, 1], ["50vw", "0vw"]);
   const storeOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]); 
 
@@ -108,11 +102,9 @@ export default function Home() {
       <Hero />
 
       {/* --- 2. THE GUNMETAL SHOWROOM --- */}
-      {/* Added overflow-hidden to contain the massive BBQ watermark */}
       <section className="py-32 px-6 bg-[#111111] relative border-b border-white/5 overflow-hidden" style={{ perspective: "1000px" }}>
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none z-0" />
         
-        {/* NEW: BBQ Watermark on the Left Side at 90 Degrees with Shadow */}
         <div className="absolute top-1/2 left-[-15vw] md:left-[-5vw] -translate-y-1/2 -rotate-90 pointer-events-none select-none z-0">
           <h2 
             className="font-oswald text-[35vw] md:text-[25vw] font-black text-white/[0.06] uppercase leading-none whitespace-nowrap tracking-tighter"
@@ -212,7 +204,6 @@ export default function Home() {
       {/* --- 3. THE "PURE GLASS" STORE SECTION --- */}
       <section ref={storeRef} className="py-48 px-6 bg-black relative overflow-hidden" style={{ perspective: "1000px" }}>
         
-        {/* Dynamic Scroll-Linked Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
           <motion.h2 
             style={{
@@ -242,12 +233,13 @@ export default function Home() {
                   <span className="text-[10px] font-black uppercase tracking-widest">Shop Official</span>
                 </div>
                 
+                {/* UPDATED: text-3xl sm:text-5xl md:text-8xl for mobile sizing */}
                 <motion.h2 
                   variants={staggerTextContainer}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: false }}
-                  className="font-oswald text-5xl md:text-8xl font-black uppercase leading-[0.85] mb-10 block"
+                  className="font-oswald text-3xl sm:text-5xl md:text-8xl font-black uppercase leading-[0.85] mb-10 block"
                 >
                   <span className="inline-block">
                     {"Spices, Sauces".split("").map((char, i) => (

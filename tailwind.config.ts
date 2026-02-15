@@ -2,21 +2,17 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",        // Changed to point to /app directly
+    "./components/**/*.{js,ts,jsx,tsx,mdx}"  // Changed to point to /components directly
   ],
   theme: {
     extend: {
       colors: {
-        'pit-green': '#15F128', // Your custom neon green
+        'pit-green': '#15F128',
       },
       fontFamily: {
         sans: ['var(--font-inter)'],
         oswald: ['var(--font-oswald)'],
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },
   },
