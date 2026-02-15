@@ -29,7 +29,7 @@ const SLIDES = [
     id: 3,
     image: "/grills.webp",
     subtitle: "Heavy Duty Performance",
-    title: "Art of the Grill",
+    title: "Art of the Grilling",
     description: "Charcoal grilling systems designed for the perfect sear. Outlasting everything else on the market.",
     cta: "Shop Grills",
     href: "/grills",
