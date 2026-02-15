@@ -41,7 +41,6 @@ const TRANSITION_DURATION = 1500;
 const CIRCLE_RADIUS = 36;
 const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
-// --- HERO ANIMATION VARIANTS (Crisp, No Blur) ---
 const slideContainerVariants: Variants = {
   hidden: { 
     opacity: 0, 
@@ -142,7 +141,6 @@ export default function Hero() {
                 animate={isActive ? "visible" : "hidden"}
                 className="w-full max-w-7xl pointer-events-auto"
               >
-                {/* 1. SUBTITLE */}
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-4">
                     <motion.span variants={textItemVariants} className="w-8 h-[3px] bg-[#EA580C] inline-block"></motion.span>
                     <span className="text-[#EA580C] font-bold text-[10px] md:text-sm uppercase tracking-widest flex flex-wrap gap-x-1">
@@ -158,7 +156,6 @@ export default function Hero() {
                     </span>
                 </div>
                 
-                {/* 2. TITLE */}
                 <h1 className="font-oswald font-black text-5xl sm:text-6xl md:text-8xl uppercase leading-[1.1] md:leading-none mb-4 md:mb-6 drop-shadow-xl flex flex-wrap gap-x-2 md:gap-x-4">
                    {slide.title.split(" ").map((word, wIdx) => (
                        <span key={`word-${wIdx}`} className="inline-block whitespace-nowrap">
@@ -175,7 +172,6 @@ export default function Hero() {
                    ))}
                 </h1>
                 
-                {/* 3. DESCRIPTION */}
                 <p className="text-zinc-200 text-sm md:text-xl font-light leading-relaxed mb-6 md:mb-8 max-w-2xl drop-shadow-md">
                   {slide.description.split(" ").map((word, i) => (
                     <motion.span key={`desc-${i}`} variants={textItemVariants} className="inline-block mr-[0.3em] mb-1">
@@ -184,7 +180,6 @@ export default function Hero() {
                   ))}
                 </p>
                 
-                {/* 4. BUTTONS */}
                 <motion.div variants={textItemVariants} className="flex flex-wrap gap-3 md:gap-4 pointer-events-auto">
                   <Link href={slide.href} className="group relative overflow-hidden bg-[#EA580C] text-black px-6 py-3 md:px-10 md:py-4 rounded-full font-bold uppercase tracking-widest text-xs md:text-sm hover:scale-105 transition-all shadow-[0_0_20px_rgba(234,88,12,0.4)]">
                     <span className="relative z-10 flex items-center gap-2">{slide.cta} <ArrowRight size={16} className="md:w-[18px] md:h-[18px]" /></span>
@@ -206,13 +201,25 @@ export default function Hero() {
           <span className="text-xl mb-1 font-light">/ 0{SLIDES.length}</span>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
-          <button onClick={handleManualPrev} className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white hover:text-black transition-all active:scale-95"><ChevronLeft size={20} className="md:w-6 md:h-6" /></button>
-          <button onClick={handleManualNext} className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center group active:scale-95 transition-transform">
-            <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 80 80">
+          <button 
+            onClick={handleManualPrev} 
+            aria-label="Previous slide" // FIX: Added discernible name
+            className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white hover:text-black transition-all active:scale-95"
+          >
+            <ChevronLeft size={20} className="md:w-6 md:h-6" aria-hidden="true" />
+          </button>
+          <button 
+            onClick={handleManualNext} 
+            aria-label="Next slide" // FIX: Added discernible name
+            className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center group active:scale-95 transition-transform"
+          >
+            <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 80 80" aria-hidden="true">
               <circle cx="40" cy="40" r={CIRCLE_RADIUS} stroke="white" strokeWidth="1" fill="none" className="opacity-20" />
               <circle ref={circleRef} cx="40" cy="40" r={CIRCLE_RADIUS} stroke="#EA580C" strokeWidth="3" fill="none" strokeDasharray={CIRCLE_CIRCUMFERENCE} strokeDashoffset={CIRCLE_CIRCUMFERENCE} strokeLinecap="round" />
             </svg>
-            <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-[#EA580C] flex items-center justify-center text-black shadow-[0_0_20px_rgba(234,88,12,0.4)] group-hover:scale-110 transition-transform"><ChevronRight size={20} className="md:w-6 md:h-6" /></div>
+            <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-[#EA580C] flex items-center justify-center text-black shadow-[0_0_20px_rgba(234,88,12,0.4)] group-hover:scale-110 transition-transform">
+              <ChevronRight size={20} className="md:w-6 md:h-6" aria-hidden="true" />
+            </div>
           </button>
         </div>
       </div>
