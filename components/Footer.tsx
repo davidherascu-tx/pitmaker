@@ -123,7 +123,7 @@ export default function Footer() {
               </li>
               <li className="flex justify-between">
                 {/* FIXED: Removed zinc-600 from Sunday labels */}
-                <span className="text-zinc-400">Sunday's</span>
+                <span className="text-zinc-400">Sunday</span>
                 <span className="text-zinc-400 font-bold">Closed</span>
               </li>
             </ul>
