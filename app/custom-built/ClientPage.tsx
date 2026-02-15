@@ -76,8 +76,8 @@ export default function CustomBuiltClient({ galleryImages }: { galleryImages: st
             src="/images/Diet-Mt-Dew.webp" // Optional Fallback Image Path
             alt="Pitmaker Custom Built Trailer" 
             fill 
-            className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
-            priority
+className="object-cover opacity-90 group-hover:opacity-100 scale-100 group-hover:scale-110 transition-transform duration-700"
+    priority
           />
         </div>
 

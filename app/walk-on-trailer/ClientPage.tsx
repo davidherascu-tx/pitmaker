@@ -76,9 +76,9 @@ export default function WalkOnClient({ galleryImages }: { galleryImages: string[
             src="/images/Dodge-City.webp" // Optional Fallback Image Path
             alt="Pitmaker Walk-On Trailer" 
             fill 
-            className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
-            priority
-          />
+className="object-cover opacity-90 group-hover:opacity-100 scale-100 group-hover:scale-110 transition-transform duration-700"
+    priority
+    />
         </div>
 
         <div className="w-full lg:w-1/2 flex flex-col justify-center">

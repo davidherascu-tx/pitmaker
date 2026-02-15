@@ -126,13 +126,13 @@ export default function CPTCustomClient({ galleryImages }: { galleryImages: stri
       <section className="relative container mx-auto px-6 py-12 md:py-20 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
         <div className="w-full lg:w-1/2 relative aspect-[4/3] rounded-[2.5rem] md:rounded-[3.5rem] bg-[#111111] border border-white/10 overflow-hidden shadow-2xl flex items-center justify-center p-8 group">
           <div className="absolute inset-0 bg-gradient-to-tr from-[#EA580C]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          <Image 
-            src="/images/CPT_BBQ_Trailer.webp" // Optional Fallback Image Path
-            alt="CPT Custom BBQ Trailer" 
-            fill 
-            className="object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] scale-95 group-hover:scale-105 transition-transform duration-700"
-            priority
-          />
+<Image 
+    src="/images/CPT_BBQ_Trailer.webp" 
+    alt="CPT Custom BBQ Trailer" 
+    fill 
+    className="object-cover opacity-90 group-hover:opacity-100 scale-100 group-hover:scale-110 transition-transform duration-700"
+    priority
+  />
         </div>
 
         <div className="w-full lg:w-1/2 flex flex-col justify-center">
