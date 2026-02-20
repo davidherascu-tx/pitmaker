@@ -129,8 +129,8 @@ export default function Hero() {
                  priority={index === 0} 
                />
                
-               <div className={`absolute inset-0 bg-black/30 transition-opacity duration-[1500ms] ${isActive ? "opacity-100" : "opacity-0"}`} />
-               <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent transition-opacity duration-[1500ms] ${isActive ? "opacity-100" : "opacity-0"}`} />
+              {/* Dark at top and bottom, completely clear in the center */}
+              <div className={`absolute inset-0 bg-gradient-to-b from-black/90 via-transparent to-black/95 transition-opacity duration-[1500ms] ${isActive ? "opacity-100" : "opacity-0"}`} />         
             </div>
             
             <div className="relative h-full container mx-auto px-4 md:px-12 pb-32 md:pb-32 flex flex-col justify-end items-start pointer-events-none">
