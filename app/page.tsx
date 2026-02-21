@@ -15,21 +15,21 @@ const PRODUCTS = [
     id: "trailers",
     title: "Trailers",
     subtitle: "Mobile Commercial",
-    img: "/trailers.webp",
+    img: "/trailer_page.webp",
     desc: "Single to multi-axle commercial rigs built from 1/4\" virgin steel for the ultimate road-worthy pit.",
   },
   {
     id: "smokers",
     title: "Smokers",
     subtitle: "Insulated Vertical",
-    img: "/smokers.webp",
+    img: "/smoker.webp",
     desc: "2000°F thermal lock technology for unmatched heat management and fuel efficiency.",
   },
   {
     id: "grills",
     title: "Grills",
     subtitle: "Charcoal Systems",
-    img: "/grills.webp",
+    img: "/grill.webp",
     desc: "High-velocity airflow systems designed for the perfect industrial-grade sear.",
   }
 ];
