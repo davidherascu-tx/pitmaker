@@ -17,7 +17,7 @@ const INITIAL_MEISTER_SERIES = [
     id: "30-adjustable-charcoal-grill",
     name: "30\" Grill-Meister",
     sanityName: "30-Inch Grill-Meister",
-    stock: "PM-30-MEISTER",
+    stock: "PM-GM-30",
     price: 2695,
     img: "/images/grill_30_grill_meister.webp",
     desc: "Heavy-duty adjustable charcoal grill built for precision searing and rugged durability."
@@ -26,7 +26,7 @@ const INITIAL_MEISTER_SERIES = [
     id: "grill-meister-adjustable-charcoal-grill",
     name: "48\" Grill-Meister",
     sanityName: "48-Inch Grill-Meister",
-    stock: "PM-48-MEISTER",
+    stock: "PM-GM-48",
     price: 3295,
     img: "/images/grill_48_grill_meister.webp",
     desc: "Extra-large heavy-duty adjustable charcoal grill for massive backyard or catering capacity."
@@ -38,7 +38,7 @@ const INITIAL_PERFORMANCE_SERIES = [
     id: "mvp-tailgate-grill",
     name: "MVP Tailgate Grill",
     sanityName: "MVP Tailgate Grill",
-    stock: "PM-MVP2024",
+    stock: "PM-MVP-24x20",
     price: 1095,
     img: "/images/grill_mvp_tailgate.webp",
     desc: "Standard 24\" x 20\" carbon steel Tailgater grill designed for ultimate mobility and flavor."

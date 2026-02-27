@@ -13,23 +13,23 @@ const client = createClient({
 
 // --- BASE INVENTORY DATA (We will overwrite prices with Live Sanity data below) ---
 const INITIAL_SNIPER_SERIES = [
-  { id: "short-sniper", name: "Short Sniper", sanityName: "Short Sniper", stock: "PM-SHORT-SNIPER", price: 3995, img: "/images/smoker_short_sniper.webp", desc: "Traditional 48\" offset stick burner designed for precision draft control." },
-  { id: "long-rifle-sniper", name: "Long Rifle Sniper", sanityName: "Long Rifle Sniper", stock: "PM-LONG-RIFLE", price: 4495, img: "/images/smoker_long_rifle_sniper.webp", desc: "Extended 58\" offset smoker for maximum cooking surface and airflow." },
-  { id: "magnum-sniper", name: "Magnum Sniper", sanityName: "Magnum Sniper", stock: "PM-MAGNUM-SNIPER", price: 5795, img: "/images/smoker_magnum_sniper.webp", desc: "The ultimate massive offset with an insulated firebox for supreme efficiency." }
+  { id: "short-sniper", name: "Short Sniper", sanityName: "Short Sniper", stock: "PM-48-S", price: 3995, img: "/images/smoker_short_sniper.webp", desc: "Traditional 48\" offset stick burner designed for precision draft control." },
+  { id: "long-rifle-sniper", name: "Long Rifle Sniper", sanityName: "Long Rifle Sniper", stock: "PM-LR-SNIPER-24x58", price: 4495, img: "/images/smoker_long_rifle_sniper.webp", desc: "Extended 58\" offset smoker for maximum cooking surface and airflow." },
+  { id: "magnum-sniper", name: "Magnum Sniper", sanityName: "Magnum Sniper", stock: "PM-MAG-SNIPER-24x48", price: 5795, img: "/images/smoker_magnum_sniper.webp", desc: "The ultimate massive offset with an insulated firebox for supreme efficiency." }
 ];
 
 const INITIAL_SAFE_SERIES = [
-  { id: "safe-w-wheels", name: "Safe w/ Wheels", sanityName: "Safe w/ Wheels", stock: "PM-SAFE-WHEELS", price: 3500, img: "/images/smokers_safe_w_wheels.webp", desc: "Heavy-duty double-walled insulated vertical smoker on mobile casters." },
-  { id: "safe-w-cart", name: "Safe w/ Cart", sanityName: "BBQ Safe w/ Cart", stock: "PM-SAFE-CART", price: 3900, img: "/images/smoker_safe_w_cart.webp", desc: "The iconic BBQ Safe mounted on a robust prep cart for easy transport." },
+  { id: "safe-w-wheels", name: "Safe w/ Wheels", sanityName: "Safe w/ Wheels", stock: "PM-BBQ-SAFE-W-WHEELS", price: 3500, img: "/images/smokers_safe_w_wheels.webp", desc: "Heavy-duty double-walled insulated vertical smoker on mobile casters." },
+  { id: "safe-w-cart", name: "Safe w/ Cart", sanityName: "BBQ Safe w/ Cart", stock: "PM-BBQ-SAFE-CART", price: 3900, img: "/images/smoker_safe_w_cart.webp", desc: "The iconic BBQ Safe mounted on a robust prep cart for easy transport." },
   { id: "safe-grill-meister-combo", name: "Safe/Grill-Meister Combo", sanityName: "Safe/Grill-Meister Combo", stock: "PM-SAFE-GM-COMBO", price: 5995, img: "/images/smoker_safe_grill.webp", desc: "The ultimate backyard rig combining our BBQ Safe and Grill-Meister." }
 ];
 
 const INITIAL_CORE_MODELS = [
-  { id: "vault-smoker", name: "Vault", sanityName: "Vault Smoker", stock: "PM-VAULT", price: 4495, img: "/images/smoker_vault.webp", desc: "Our flagship massive insulated vertical smoker. Zero smoke leaks, pure efficiency." },
-  { id: "revolver", name: "Revolver", sanityName: "Revolver Smoker", stock: "PM-REVOLVER", price: 2395, img: "/images/smoker_revolver.webp", desc: "Heavy-duty offset drum smoker with incredible temperature stability." },
-  { id: "hitman", name: "Hitman", sanityName: "Hitman Smoker", stock: "PM-HITMAN", price: 3395, img: "/images/smoker_hitman.webp", desc: "Compact and deadly standard flow offset smoker for the purist." },
-  { id: "edge", name: "Edge", sanityName: "Edge Smoker", stock: "PM-EDGE", price: 5795, img: "/images/smoker_edge.webp", desc: "Sleek and modern rectangular insulated vertical smoker." },
-  { id: "pm-ar-20-pellet", name: "PM AR-20 Pellet", sanityName: "PM AR-20 Pellet", stock: "PM-AR20-PELLET", price: 2395, img: "/images/smoker_pellet.webp", desc: "Set-and-forget pellet convenience built with Pitmaker's legendary steel." }
+  { id: "vault-smoker", name: "Vault", sanityName: "Vault Smoker", stock: "PM-BBQ-VAULT", price: 4495, img: "/images/smoker_vault.webp", desc: "Our flagship massive insulated vertical smoker. Zero smoke leaks, pure efficiency." },
+  { id: "revolver", name: "Revolver", sanityName: "Revolver Smoker", stock: "PM-Revolver-20x32", price: 2395, img: "/images/smoker_revolver.webp", desc: "Heavy-duty offset drum smoker with incredible temperature stability." },
+  { id: "hitman", name: "Hitman", sanityName: "Hitman Smoker", stock: "PM-HITMAN-24x48", price: 3395, img: "/images/smoker_hitman.webp", desc: "Compact and deadly standard flow offset smoker for the purist." },
+  { id: "edge", name: "Edge", sanityName: "Edge Smoker", stock: "PM-BBQ-EDGE", price: 5795, img: "/images/smoker_edge.webp", desc: "Sleek and modern rectangular insulated vertical smoker." },
+  { id: "pm-ar-20-pellet", name: "PM AR-20 Pellet", sanityName: "PM AR-20 Pellet", stock: "PM-PELLET-AR-20x32", price: 2395, img: "/images/smoker_pellet.webp", desc: "Set-and-forget pellet convenience built with Pitmaker's legendary steel." }
 ];
 
 // This makes the page dynamically fetch fresh data every time someone visits
