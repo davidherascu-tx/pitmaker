@@ -6,59 +6,81 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Settings, ShieldCheck, Ruler, Hammer, Check, 
-  Flame, ArrowRight, Camera, Plus, X, ChevronLeft, ChevronRight, LayoutDashboard, Truck
+  Flame, ArrowRight, Camera, Plus, X, ChevronLeft, ChevronRight, LayoutDashboard, Truck, Droplet, Wind
 } from "lucide-react";
 
-const BASE_PRICE = 4495;
-const STOCK_NUMBER = "PM-58-S"; 
+const STOCK_NUMBER = "PM-LR-SNIPER-24x58"; 
 
 const SPECS = [
-  { label: "Main Chamber", value: "58″ x 24″", icon: Ruler },
-  { label: "Grate Area", value: "Massive Expanded", icon: LayoutDashboard },
-  { label: "Capacity", value: "10-14 Briskets", icon: Flame },
-  { label: "Mobility", value: "Heavy Duty Casters", icon: Truck }
+  { label: "Main Chamber", value: "24” x 58”", icon: Ruler },
+  { label: "Grate Area", value: "2204 Sq. In.", icon: LayoutDashboard },
+  { label: "Capacity", value: "8-12 Briskets", icon: Flame },
+  { label: "Material", value: "1/4\" Plate Steel", icon: ShieldCheck }
 ];
 
 const STANDARD_FEATURES = [
-  "Smoke-Lock Technology™ with double-walled insulated cooking chamber doors.",
-  "Extended 58-inch chamber for massive capacity and increased draft pull.",
-  "Slide-Out Cooking Grates and Slide-Out Firegrate.",
-  "1-1/4″ Ball Valve Drain for Easy Cleanup.",
-  "Pitmaker Vortex Exhaust™ Smoke Exhaust System.",
-  "Solid Stainless 1″ x 1″ Tubular Handles for hanging towels & tools.",
-  "Solid Stainless Steel Smoke Stack and Stack Damper.",
-  "Solid 3/16″ Thick Steel on the Cooking Chamber.",
-  "Full Virgin “P & O” Carbon Steel and 304 Stainless Steel Construction.",
-  "Stainless Steel Air-Cooled Spring Handles – “Cool-to-Touch”.",
-  "Built-In Water Reservoir for moist heat and flavor."
+  "Slide-Out Cooking Grates and Fold-Up Front Shelf included.",
+  "Counter-Weighted Main Cooking Chamber Door.",
+  "Solid Stainless Air Dampers on Firebox for a lifetime of corrosion-free use.",
+  "Solid 1/4″ Thick Steel on the Cooking Chamber with Fully Seam-Welded Flanged Lids.",
+  "Stainless Steel Cooking Chamber Hinges and Hinge Sleeves.",
+  "5/8” Solid Stainless Handle Rods with Stainless “Cool-to-Touch” Handles.",
+  "Slide-Out Firegrate and Cooking Chamber Multi-Function use as Water Reservoir.",
+  "Heavy Duty 4-1/2″ and 10″ Solid Rubber Casters with Lubricating Points for Easy Moving."
 ];
 
-const CUSTOM_OPTIONS = [
-  { id: "ss-firebox", label: "Solid Stainless Steel Firebox", price: 1600, icon: ShieldCheck, desc: "Extreme, lifetime lasting corrosion resistance on the highest area of wear and tear." },
-  { id: "prep-table", label: "Stainless Steel Food Prep Table", price: 135, icon: Hammer, desc: "20″ x 22″ Removable solid stainless prep surface." },
-  { id: "barrel-shroud", label: "Barrel Shroud", price: 250, icon: Settings, desc: "Custom Painted Steel Plate on back of the Cooking Chamber (Painted any standard color)." }
-];
-
-export default function LongRifleClient({ galleryImages }: { galleryImages: string[] }) {
+export default function LongRifleClient({ galleryImages, cmsData }: { galleryImages: string[], cmsData: any }) {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>({});
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const toggleOption = (id: string) => {
+  const BASE_PRICE = cmsData?.basePrice || 4595;
+  const rawOptions = cmsData?.options || [];
+  
+  const CUSTOM_OPTIONS = rawOptions.map((opt: any, index: number) => {
+    const icons = [Hammer, Flame, Wind, ShieldCheck, Droplet, Settings];
+    return {
+      id: `opt-${index}`,
+      label: opt.label,
+      price: opt.price || 0,
+      desc: opt.desc || "", 
+      group: opt.group || null, 
+      requiresQuote: opt.requiresQuote || false,
+      icon: icons[index % icons.length]
+    };
+  });
+
+  const toggleOption = (option: any) => {
     setSelectedOptions(prev => {
-      const next = { ...prev, [id]: !prev[id] };
+      const isSelected = prev[option.id];
+      const next = { ...prev };
+
+      if (isSelected) {
+        next[option.id] = false;
+      } else {
+        next[option.id] = true;
+        if (option.group) {
+          CUSTOM_OPTIONS.forEach((opt: any) => {
+            if (opt.group === option.group && opt.id !== option.id) {
+              next[opt.id] = false;
+            }
+          });
+        }
+      }
       return next;
     });
   };
 
-  const currentTotal = BASE_PRICE + CUSTOM_OPTIONS.reduce((total, opt) => {
+  const currentTotal = BASE_PRICE + CUSTOM_OPTIONS.reduce((total: number, opt: any) => {
     return selectedOptions[opt.id] ? total + opt.price : total;
   }, 0);
 
+  const hasQuoteOption = CUSTOM_OPTIONS.some((o: any) => selectedOptions[o.id] && o.requiresQuote);
+
   const handleAddToQuote = () => {
-    const activeOptions = CUSTOM_OPTIONS.filter(o => selectedOptions[o.id]).map(o => ({
+    const activeOptions = CUSTOM_OPTIONS.filter((o: any) => selectedOptions[o.id]).map((o: any) => ({
       label: o.label,
-      price: o.price
+      price: o.requiresQuote ? "Quote" : o.price
     }));
     
     const newItem = {
@@ -71,7 +93,6 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
 
     const existingCart = JSON.parse(localStorage.getItem('pitmaker_quote_cart') || '[]');
     existingCart.push(newItem);
-    
     localStorage.setItem('pitmaker_quote_cart', JSON.stringify(existingCart));
     router.push('/contact');
   };
@@ -106,13 +127,12 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] selection:bg-[#EA580C] pt-24 pb-48 font-sans">
-      
       <section className="relative container mx-auto px-6 py-12 md:py-20 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
         <div className="w-full lg:w-1/2 relative aspect-[4/3] rounded-[2.5rem] md:rounded-[3.5rem] bg-[#111111] border border-white/10 overflow-hidden shadow-2xl group">
           <div className="absolute inset-0 bg-gradient-to-tr from-[#EA580C]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none" />
           <Image 
             src="/images/smoker_long_rifle_sniper.webp" 
-            alt="Long Rifle Sniper" 
+            alt="Pitmaker Long Rifle Sniper" 
             fill 
             className="object-cover opacity-90 group-hover:opacity-100 scale-100 group-hover:scale-110 transition-transform duration-700"
             priority
@@ -134,7 +154,7 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
             Long Rifle <br /> <span className="text-zinc-500">Sniper</span>
           </h1>
           <p className="text-zinc-400 text-lg md:text-xl font-light leading-relaxed mb-8 max-w-xl">
-            Take everything you love about the Sniper and stretch it out! The 58-inch chamber increases cooking capacity while creating incredibly stable, powerful draft currents inside the pit. Complete with our revolutionary Smoke-Lock Technology™.
+            Stretching the classic offset design to 58 inches, the Long Rifle gives you the massive grate space needed for large catering events or big cookouts while maintaining the precise drafting and heavy smoke characteristics of the Sniper Series.
           </p>
           <div className="grid grid-cols-2 gap-4 mb-10 border-t border-white/10 pt-8">
             {SPECS.map((spec, idx) => (
@@ -173,35 +193,44 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
                <h3 className="font-oswald text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-8 border-b border-white/10 pb-6">
                  Upgrade <span className="text-zinc-600">Your Pit</span>
                </h3>
+
                <div className="flex flex-col gap-4">
-                 {CUSTOM_OPTIONS.map((option) => {
+                 {CUSTOM_OPTIONS.map((option: any) => {
                    const isSelected = selectedOptions[option.id];
                    return (
                      <button 
                        key={option.id}
-                       onClick={() => toggleOption(option.id)}
+                       onClick={() => toggleOption(option)}
                        className={`group flex items-center justify-between w-full text-left p-6 rounded-2xl border transition-all duration-300 ${
                          isSelected ? "bg-[#EA580C]/10 border-[#EA580C] shadow-[0_0_20px_rgba(234,88,12,0.15)]" : "bg-[#111111] border-white/5 hover:border-white/20 hover:bg-white/[0.02]"
                        }`}
                      >
-                       <div className="flex items-start gap-5">
-                          <div className={`mt-1 flex items-center justify-center w-6 h-6 rounded border transition-colors shrink-0 ${
+                       <div className="flex items-center gap-5 flex-1 pr-6">
+                          <div className={`flex items-center justify-center w-6 h-6 shrink-0 border transition-colors ${
+                            option.group ? 'rounded-full' : 'rounded'
+                          } ${
                             isSelected ? "bg-[#EA580C] border-[#EA580C] text-black" : "border-zinc-600 text-transparent group-hover:border-zinc-400"
                           }`}>
-                            <Check size={14} strokeWidth={3} />
+                            {option.group ? (
+                               <div className={`w-2.5 h-2.5 rounded-full bg-black ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
+                            ) : (
+                               <Check size={14} strokeWidth={3} />
+                            )}
                           </div>
-                          <div className="flex flex-col gap-1">
+                          <div className="flex flex-col justify-center gap-1">
                              <span className={`font-bold uppercase tracking-widest text-sm md:text-base transition-colors ${isSelected ? "text-white" : "text-zinc-300"}`}>
                                {option.label}
                              </span>
-                             <span className="text-xs text-zinc-500 font-light max-w-md line-clamp-2 md:line-clamp-none">
-                               {option.desc}
-                             </span>
+                             {option.desc && (
+                               <span className="text-xs text-zinc-500 font-light leading-relaxed">
+                                 {option.desc}
+                               </span>
+                             )}
                           </div>
                        </div>
                        <div className="shrink-0 flex items-center gap-2">
                           <span className={`font-oswald text-xl tracking-tight transition-colors ${isSelected ? "text-[#EA580C]" : "text-white"}`}>
-                            +${option.price}
+                            {option.requiresQuote ? "Quote" : `+$${option.price}`}
                           </span>
                        </div>
                      </button>
@@ -219,19 +248,21 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
                 
                 <div className="flex justify-between items-center mb-4 text-sm text-zinc-300">
                   <span>Base Long Rifle Sniper</span>
-                  <span className="font-oswald text-lg tracking-wider">${BASE_PRICE.toLocaleString()}</span>
+                  <span className="font-oswald text-lg tracking-wider shrink-0 ml-4">${BASE_PRICE.toLocaleString()}</span>
                 </div>
 
                 <div className="space-y-3 mb-6 min-h-[50px]">
-                  {CUSTOM_OPTIONS.filter(o => selectedOptions[o.id]).map(opt => (
+                  {CUSTOM_OPTIONS.filter((o: any) => selectedOptions[o.id]).map((opt: any) => (
                      <motion.div 
                        initial={{ opacity: 0, x: 10 }}
                        animate={{ opacity: 1, x: 0 }}
                        key={opt.id} 
-                       className="flex justify-between items-start text-xs text-zinc-500"
+                       className="flex justify-between items-start text-xs text-zinc-500 gap-4"
                      >
-                        <span className="w-2/3 pr-2">+ {opt.label}</span>
-                        <span className="font-oswald tracking-wider text-white">${opt.price.toLocaleString()}</span>
+                        <span className="flex-1">+ {opt.label}</span>
+                        <span className="font-oswald tracking-wider text-white shrink-0">
+                          {opt.requiresQuote ? "Quote" : `+$${opt.price.toLocaleString()}`}
+                        </span>
                      </motion.div>
                   ))}
                   {Object.values(selectedOptions).every(v => !v) && (
@@ -239,11 +270,18 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
                   )}
                 </div>
 
-                <div className="border-t border-white/10 pt-6 mb-8 flex justify-between items-end">
-                   <span className="text-white font-bold uppercase tracking-widest text-xs">Total Estimate</span>
-                   <span className="font-oswald text-5xl font-black text-[#EA580C] tracking-tighter">
-                     ${currentTotal.toLocaleString()}
-                   </span>
+                <div className="border-t border-white/10 pt-6 mb-8 flex flex-col gap-1">
+                   <div className="flex justify-between items-end gap-4">
+                     <span className="text-white font-bold uppercase tracking-widest text-xs flex-1 mb-2">Total Estimate</span>
+                     <span className="font-oswald text-4xl md:text-5xl font-black text-[#EA580C] tracking-tighter shrink-0">
+                       ${currentTotal.toLocaleString()}{hasQuoteOption ? '+' : ''}
+                     </span>
+                   </div>
+                   {hasQuoteOption && (
+                     <p className="text-[#EA580C] text-[10px] text-right uppercase tracking-widest font-bold">
+                       *Pending custom quote adjustments
+                     </p>
+                   )}
                 </div>
 
                 <button 
@@ -264,14 +302,13 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
         </div>
       </section>
 
-      {/* --- AUTOMATIC GALLERY SECTION --- */}
       <section className="container mx-auto px-6 mt-32 border-t border-white/5 pt-20">
          <div className="flex items-center justify-between mb-12">
             <div>
                <h3 className="font-oswald text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2">
                  The <span className="text-zinc-600">Gallery</span>
                </h3>
-               <p className="text-zinc-500 font-light text-sm">See the Long Rifle Sniper in action.</p>
+               <p className="text-zinc-500 font-light text-sm">See the Long Rifle in action.</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500">
                <Camera size={20} />
@@ -296,7 +333,7 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
                  >
                     <Image 
                       src={imgSrc} 
-                      alt={`Long Rifle Image ${idx + 1}`} 
+                      alt={`Long Rifle Gallery Image ${idx + 1}`} 
                       fill 
                       className="object-cover opacity-80 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700" 
                     />
@@ -311,7 +348,6 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
          )}
       </section>
 
-      {/* --- LIGHTBOX MODAL --- */}
       <AnimatePresence>
         {lightboxIndex !== null && galleryImages.length > 0 && (
           <motion.div 
@@ -331,7 +367,6 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
              <button onClick={nextImage} className="absolute right-4 md:right-10 text-white hover:text-[#EA580C] hover:scale-110 transition-all z-50 bg-black/50 p-4 rounded-full border border-white/10 shadow-lg">
                 <ChevronRight size={32} />
              </button>
-
              <motion.div 
                key={lightboxIndex}
                initial={{ opacity: 0, scale: 0.95 }}
@@ -352,7 +387,6 @@ export default function LongRifleClient({ galleryImages }: { galleryImages: stri
           </motion.div>
         )}
       </AnimatePresence>
-
     </main>
   );
 }

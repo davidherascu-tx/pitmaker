@@ -9,51 +9,77 @@ import {
   Flame, ArrowRight, Camera, Plus, X, ChevronLeft, ChevronRight, LayoutDashboard, Truck
 } from "lucide-react";
 
-const BASE_PRICE = 1095;
-const STOCK_NUMBER = "PM-MVP2024"; 
+const STOCK_NUMBER = "PM-MVP-24x20"; 
 
 const SPECS = [
-  { label: "Chamber", value: "24″ x 20″", icon: Ruler },
-  { label: "Grate Area", value: "713 Sq. In.", icon: LayoutDashboard },
-  { label: "Material", value: "1/8″ Plate Steel", icon: ShieldCheck },
-  { label: "Mobility", value: "Hitch Mount", icon: Truck }
+  { label: "Grate Area", value: "24” x 20”", icon: Ruler },
+  { label: "Capacity", value: "10-12 Steaks", icon: Flame },
+  { label: "Material", value: "1/8\" Plate Steel", icon: ShieldCheck },
+  { label: "Weight", value: "135 lbs", icon: LayoutDashboard }
 ];
 
 const STANDARD_FEATURES = [
-  "Heavy-duty truck removable hitch Included.",
-  "Heavy-duty 1/8″ plate steel body construction with 14 Ga. stainless steel lid.",
-  "Stainless steel hinges for life-long corrosion resistance.",
-  "Stainless steel sliding air damper for burn-rate/temperature control.",
-  "Slide-out removable ash pan with firegrate for easy clean up.",
-  "Two slide-out cooking grates.",
-  "Stainless steel Cool-to-Touch lid handle.",
-  "Pin-able/Lockable Stainless Lid and Charcoal Pan/Firegrate for Safe Transportation."
+  "Slide-out ash pan for incredibly easy firebox cleanout.",
+  "Heavy duty adjustable charcoal grill basket.",
+  "Solid stainless steel cool-to-touch spring handle.",
+  "Two heavy duty stainless steel side-carrying handles.",
+  "Top and bottom adjustable air dampers for precise temperature control.",
+  "Baffle outtake and stainless steel smoke stack.",
+  "High-Temp Industrial Paint Finish."
 ];
 
-const CUSTOM_OPTIONS = [
-  { id: "floor-stand", label: "Optional Floor Stand", price: 495, icon: Hammer, desc: "Add a custom floor stand (Like the BBQ Safe Cart) for backyard use." }
-];
-
-export default function MVPClient({ galleryImages }: { galleryImages: string[] }) {
+export default function MVPClient({ galleryImages, cmsData }: { galleryImages: string[], cmsData: any }) {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>({});
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const toggleOption = (id: string) => {
+  const BASE_PRICE = cmsData?.basePrice || 895;
+  const rawOptions = cmsData?.options || [];
+  
+  const CUSTOM_OPTIONS = rawOptions.map((opt: any, index: number) => {
+    const icons = [Truck, ShieldCheck, Settings, Hammer];
+    return {
+      id: `opt-${index}`,
+      label: opt.label,
+      price: opt.price || 0,
+      desc: opt.desc || "", 
+      group: opt.group || null, 
+      requiresQuote: opt.requiresQuote || false,
+      icon: icons[index % icons.length]
+    };
+  });
+
+  const toggleOption = (option: any) => {
     setSelectedOptions(prev => {
-      const next = { ...prev, [id]: !prev[id] };
+      const isSelected = prev[option.id];
+      const next = { ...prev };
+
+      if (isSelected) {
+        next[option.id] = false;
+      } else {
+        next[option.id] = true;
+        if (option.group) {
+          CUSTOM_OPTIONS.forEach((opt: any) => {
+            if (opt.group === option.group && opt.id !== option.id) {
+              next[opt.id] = false;
+            }
+          });
+        }
+      }
       return next;
     });
   };
 
-  const currentTotal = BASE_PRICE + CUSTOM_OPTIONS.reduce((total, opt) => {
+  const currentTotal = BASE_PRICE + CUSTOM_OPTIONS.reduce((total: number, opt: any) => {
     return selectedOptions[opt.id] ? total + opt.price : total;
   }, 0);
 
+  const hasQuoteOption = CUSTOM_OPTIONS.some((o: any) => selectedOptions[o.id] && o.requiresQuote);
+
   const handleAddToQuote = () => {
-    const activeOptions = CUSTOM_OPTIONS.filter(o => selectedOptions[o.id]).map(o => ({
+    const activeOptions = CUSTOM_OPTIONS.filter((o: any) => selectedOptions[o.id]).map((o: any) => ({
       label: o.label,
-      price: o.price
+      price: o.requiresQuote ? "Quote" : o.price
     }));
     
     const newItem = {
@@ -66,7 +92,6 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
 
     const existingCart = JSON.parse(localStorage.getItem('pitmaker_quote_cart') || '[]');
     existingCart.push(newItem);
-    
     localStorage.setItem('pitmaker_quote_cart', JSON.stringify(existingCart));
     router.push('/contact');
   };
@@ -101,7 +126,6 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] selection:bg-[#EA580C] pt-24 pb-48 font-sans">
-      
       <section className="relative container mx-auto px-6 py-12 md:py-20 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
         <div className="w-full lg:w-1/2 relative aspect-[4/3] rounded-[2.5rem] md:rounded-[3.5rem] bg-[#111111] border border-white/10 overflow-hidden shadow-2xl group">
           <div className="absolute inset-0 bg-gradient-to-tr from-[#EA580C]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none" />
@@ -118,7 +142,7 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
           <div className="flex flex-wrap items-center gap-4 mb-6 self-start">
             <div className="inline-flex items-center gap-2 bg-[#EA580C] text-black px-4 py-1.5 rounded-full shadow-lg">
                <Flame size={14} />
-               <span className="text-[10px] font-black uppercase tracking-widest">Performance Series</span>
+               <span className="text-[10px] font-black uppercase tracking-widest">Portable Series</span>
             </div>
             <div className="inline-flex items-center gap-2 border border-zinc-400 bg-zinc-300 text-black px-5 py-2 rounded-full shadow-lg">
                <span className="text-sm font-bold uppercase tracking-widest">Stock #: {STOCK_NUMBER}</span>
@@ -129,7 +153,7 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
             MVP Tailgate <br /> <span className="text-zinc-500">Grill</span>
           </h1>
           <p className="text-zinc-400 text-lg md:text-xl font-light leading-relaxed mb-8 max-w-xl">
-            The ultimate grab-and-go hitch grill. Designed to be compact and portable, the MVP is built to handle the rigors of the road while delivering 713 square inches of pure charcoal cooking power. Truly the Most Valuable Pit.
+            The MVP (Most Valuable Pit) is your ultimate travel companion. Designed to slide right into a standard 2-inch receiver hitch, it's the perfect grill for tailgating, camping, or hunting trips. Featuring an adjustable charcoal basket for precise cooking control on the go.
           </p>
           <div className="grid grid-cols-2 gap-4 mb-10 border-t border-white/10 pt-8">
             {SPECS.map((spec, idx) => (
@@ -168,35 +192,44 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
                <h3 className="font-oswald text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-8 border-b border-white/10 pb-6">
                  Upgrade <span className="text-zinc-600">Your Pit</span>
                </h3>
+
                <div className="flex flex-col gap-4">
-                 {CUSTOM_OPTIONS.map((option) => {
+                 {CUSTOM_OPTIONS.map((option: any) => {
                    const isSelected = selectedOptions[option.id];
                    return (
                      <button 
                        key={option.id}
-                       onClick={() => toggleOption(option.id)}
+                       onClick={() => toggleOption(option)}
                        className={`group flex items-center justify-between w-full text-left p-6 rounded-2xl border transition-all duration-300 ${
                          isSelected ? "bg-[#EA580C]/10 border-[#EA580C] shadow-[0_0_20px_rgba(234,88,12,0.15)]" : "bg-[#111111] border-white/5 hover:border-white/20 hover:bg-white/[0.02]"
                        }`}
                      >
-                       <div className="flex items-start gap-5">
-                          <div className={`mt-1 flex items-center justify-center w-6 h-6 rounded border transition-colors shrink-0 ${
+                       <div className="flex items-center gap-5 flex-1 pr-6">
+                          <div className={`flex items-center justify-center w-6 h-6 shrink-0 border transition-colors ${
+                            option.group ? 'rounded-full' : 'rounded'
+                          } ${
                             isSelected ? "bg-[#EA580C] border-[#EA580C] text-black" : "border-zinc-600 text-transparent group-hover:border-zinc-400"
                           }`}>
-                            <Check size={14} strokeWidth={3} />
+                            {option.group ? (
+                               <div className={`w-2.5 h-2.5 rounded-full bg-black ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
+                            ) : (
+                               <Check size={14} strokeWidth={3} />
+                            )}
                           </div>
-                          <div className="flex flex-col gap-1">
+                          <div className="flex flex-col justify-center gap-1">
                              <span className={`font-bold uppercase tracking-widest text-sm md:text-base transition-colors ${isSelected ? "text-white" : "text-zinc-300"}`}>
                                {option.label}
                              </span>
-                             <span className="text-xs text-zinc-500 font-light max-w-md line-clamp-2 md:line-clamp-none">
-                               {option.desc}
-                             </span>
+                             {option.desc && (
+                               <span className="text-xs text-zinc-500 font-light leading-relaxed">
+                                 {option.desc}
+                               </span>
+                             )}
                           </div>
                        </div>
                        <div className="shrink-0 flex items-center gap-2">
                           <span className={`font-oswald text-xl tracking-tight transition-colors ${isSelected ? "text-[#EA580C]" : "text-white"}`}>
-                            +${option.price}
+                            {option.requiresQuote ? "Quote" : `+$${option.price}`}
                           </span>
                        </div>
                      </button>
@@ -213,20 +246,22 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
                 <h4 className="text-[#EA580C] font-bold text-[10px] uppercase tracking-[0.3em] mb-6">Build Summary</h4>
                 
                 <div className="flex justify-between items-center mb-4 text-sm text-zinc-300">
-                  <span>Base MVP Grill</span>
-                  <span className="font-oswald text-lg tracking-wider">${BASE_PRICE.toLocaleString()}</span>
+                  <span>Base MVP Tailgate Grill</span>
+                  <span className="font-oswald text-lg tracking-wider shrink-0 ml-4">${BASE_PRICE.toLocaleString()}</span>
                 </div>
 
                 <div className="space-y-3 mb-6 min-h-[50px]">
-                  {CUSTOM_OPTIONS.filter(o => selectedOptions[o.id]).map(opt => (
+                  {CUSTOM_OPTIONS.filter((o: any) => selectedOptions[o.id]).map((opt: any) => (
                      <motion.div 
                        initial={{ opacity: 0, x: 10 }}
                        animate={{ opacity: 1, x: 0 }}
                        key={opt.id} 
-                       className="flex justify-between items-start text-xs text-zinc-500"
+                       className="flex justify-between items-start text-xs text-zinc-500 gap-4"
                      >
-                        <span className="w-2/3 pr-2">+ {opt.label}</span>
-                        <span className="font-oswald tracking-wider text-white">${opt.price.toLocaleString()}</span>
+                        <span className="flex-1">+ {opt.label}</span>
+                        <span className="font-oswald tracking-wider text-white shrink-0">
+                          {opt.requiresQuote ? "Quote" : `+$${opt.price.toLocaleString()}`}
+                        </span>
                      </motion.div>
                   ))}
                   {Object.values(selectedOptions).every(v => !v) && (
@@ -234,11 +269,18 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
                   )}
                 </div>
 
-                <div className="border-t border-white/10 pt-6 mb-8 flex justify-between items-end">
-                   <span className="text-white font-bold uppercase tracking-widest text-xs">Total Estimate</span>
-                   <span className="font-oswald text-5xl font-black text-[#EA580C] tracking-tighter">
-                     ${currentTotal.toLocaleString()}
-                   </span>
+                <div className="border-t border-white/10 pt-6 mb-8 flex flex-col gap-1">
+                   <div className="flex justify-between items-end gap-4">
+                     <span className="text-white font-bold uppercase tracking-widest text-xs flex-1 mb-2">Total Estimate</span>
+                     <span className="font-oswald text-4xl md:text-5xl font-black text-[#EA580C] tracking-tighter shrink-0">
+                       ${currentTotal.toLocaleString()}{hasQuoteOption ? '+' : ''}
+                     </span>
+                   </div>
+                   {hasQuoteOption && (
+                     <p className="text-[#EA580C] text-[10px] text-right uppercase tracking-widest font-bold">
+                       *Pending custom quote adjustments
+                     </p>
+                   )}
                 </div>
 
                 <button 
@@ -252,7 +294,7 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
                 </button>
 
                 <p className="text-[9px] text-zinc-600 uppercase tracking-widest text-center mt-4 font-bold">
-                  *Please allow 2 to 4 weeks for fabrication.
+                  *Please allow 4 to 6 weeks for fabrication.
                 </p>
              </div>
           </div>
@@ -265,7 +307,7 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
                <h3 className="font-oswald text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2">
                  The <span className="text-zinc-600">Gallery</span>
                </h3>
-               <p className="text-zinc-500 font-light text-sm">See the MVP in action.</p>
+               <p className="text-zinc-500 font-light text-sm">See the MVP Tailgater in action.</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500">
                <Camera size={20} />
@@ -305,7 +347,6 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
          )}
       </section>
 
-      {/* --- LIGHTBOX MODAL --- */}
       <AnimatePresence>
         {lightboxIndex !== null && galleryImages.length > 0 && (
           <motion.div 
@@ -325,7 +366,6 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
              <button onClick={nextImage} className="absolute right-4 md:right-10 text-white hover:text-[#EA580C] hover:scale-110 transition-all z-50 bg-black/50 p-4 rounded-full border border-white/10 shadow-lg">
                 <ChevronRight size={32} />
              </button>
-
              <motion.div 
                key={lightboxIndex}
                initial={{ opacity: 0, scale: 0.95 }}
@@ -346,7 +386,6 @@ export default function MVPClient({ galleryImages }: { galleryImages: string[] }
           </motion.div>
         )}
       </AnimatePresence>
-
     </main>
   );
 }

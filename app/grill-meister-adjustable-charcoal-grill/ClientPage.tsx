@@ -6,57 +6,80 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Settings, ShieldCheck, Ruler, Hammer, Check, 
-  Flame, ArrowRight, Camera, Plus, X, ChevronLeft, ChevronRight, LayoutDashboard
+  Flame, ArrowRight, Camera, Plus, X, ChevronLeft, ChevronRight, LayoutDashboard, Truck
 } from "lucide-react";
 
-const BASE_PRICE = 3295;
 const STOCK_NUMBER = "PM-GM-48"; 
 
 const SPECS = [
-  { label: "Dimensions", value: "53″ L x 26″ D x 54″ T", icon: Ruler },
-  { label: "Grate Area", value: "1886 Sq. In.", icon: LayoutDashboard },
-  { label: "Capacity", value: "36-52 Burgers", icon: Flame },
-  { label: "Weight", value: "365 lbs", icon: Settings }
+  { label: "Grate Area", value: "48” x 24”", icon: Ruler },
+  { label: "Capacity", value: "24-36 Steaks", icon: Flame },
+  { label: "Material", value: "1/8\" Plate Steel", icon: ShieldCheck },
+  { label: "Weight", value: "365 lbs", icon: LayoutDashboard }
 ];
 
 const STANDARD_FEATURES = [
-  "Adjustable charcoal grate over a 12″ range of motion with 6 lockable levels.",
-  "Solid Stainless Steel Charcoal Basket Frame.",
-  "Heavy-duty virgin 12 gauge steel construction with double walled sides.",
-  "Solid Stainless Steel Handles and Handle Mechanism.",
-  "Stainless Steel Roll-Top Lid—Easy to open.",
-  "Heavy Duty solid rubber 10″ wheels and 4″ rubber swivel casters.",
-  "Two solidly constructed Slide-Out Cooking Grates.",
-  "Slide Out, removable ash tray for easy maintenance and clean-up.",
-  "Sliding air dampers for precision control of the burn rate."
+  "Fully Adjustable Charcoal Grate System for precise heat control.",
+  "Slide-Out Ash Pan for incredibly easy firebox cleanout.",
+  "Solid 1/4\" Thick Steel Construction on the firebox base.",
+  "Heavy Duty 4-1/2\" Casters with lubricating points.",
+  "Stainless Steel \"Cool-to-Touch\" Handle.",
+  "Industrial Grade Thermometer mounted on the hood.",
+  "High-Temp Industrial Paint Finish."
 ];
 
-const CUSTOM_OPTIONS = [
-  { id: "all-stainless", label: "Solid Stainless Steel Option", price: 5600, icon: ShieldCheck, desc: "Upgrade the entire grill body to solid stainless steel." },
-  { id: "prep-table", label: "Stainless Steel Slide-On Table", price: 135, icon: Hammer, desc: "Removable solid stainless prep surface." },
-  { id: "rotisserie", label: "Electric Stainless Rotisserie", price: 750, icon: Settings, desc: "Heavy duty rotisserie with solid 5/8″ stainless hex rod." }
-];
-
-export default function Meister48Client({ galleryImages }: { galleryImages: string[] }) {
+export default function Grill48Client({ galleryImages, cmsData }: { galleryImages: string[], cmsData: any }) {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>({});
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const toggleOption = (id: string) => {
+  const BASE_PRICE = cmsData?.basePrice || 2295;
+  const rawOptions = cmsData?.options || [];
+  
+  const CUSTOM_OPTIONS = rawOptions.map((opt: any, index: number) => {
+    const icons = [Truck, Hammer, ShieldCheck, Settings];
+    return {
+      id: `opt-${index}`,
+      label: opt.label,
+      price: opt.price || 0,
+      desc: opt.desc || "", 
+      group: opt.group || null, 
+      requiresQuote: opt.requiresQuote || false,
+      icon: icons[index % icons.length]
+    };
+  });
+
+  const toggleOption = (option: any) => {
     setSelectedOptions(prev => {
-      const next = { ...prev, [id]: !prev[id] };
+      const isSelected = prev[option.id];
+      const next = { ...prev };
+
+      if (isSelected) {
+        next[option.id] = false;
+      } else {
+        next[option.id] = true;
+        if (option.group) {
+          CUSTOM_OPTIONS.forEach((opt: any) => {
+            if (opt.group === option.group && opt.id !== option.id) {
+              next[opt.id] = false;
+            }
+          });
+        }
+      }
       return next;
     });
   };
 
-  const currentTotal = BASE_PRICE + CUSTOM_OPTIONS.reduce((total, opt) => {
+  const currentTotal = BASE_PRICE + CUSTOM_OPTIONS.reduce((total: number, opt: any) => {
     return selectedOptions[opt.id] ? total + opt.price : total;
   }, 0);
 
+  const hasQuoteOption = CUSTOM_OPTIONS.some((o: any) => selectedOptions[o.id] && o.requiresQuote);
+
   const handleAddToQuote = () => {
-    const activeOptions = CUSTOM_OPTIONS.filter(o => selectedOptions[o.id]).map(o => ({
+    const activeOptions = CUSTOM_OPTIONS.filter((o: any) => selectedOptions[o.id]).map((o: any) => ({
       label: o.label,
-      price: o.price
+      price: o.requiresQuote ? "Quote" : o.price
     }));
     
     const newItem = {
@@ -69,7 +92,6 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
 
     const existingCart = JSON.parse(localStorage.getItem('pitmaker_quote_cart') || '[]');
     existingCart.push(newItem);
-    
     localStorage.setItem('pitmaker_quote_cart', JSON.stringify(existingCart));
     router.push('/contact');
   };
@@ -104,13 +126,12 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] selection:bg-[#EA580C] pt-24 pb-48 font-sans">
-      
       <section className="relative container mx-auto px-6 py-12 md:py-20 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
         <div className="w-full lg:w-1/2 relative aspect-[4/3] rounded-[2.5rem] md:rounded-[3.5rem] bg-[#111111] border border-white/10 overflow-hidden shadow-2xl group">
           <div className="absolute inset-0 bg-gradient-to-tr from-[#EA580C]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none" />
           <Image 
             src="/images/grill_48_grill_meister.webp" 
-            alt="48 Inch Grill-Meister" 
+            alt="Pitmaker 48-Inch Grill-Meister" 
             fill 
             className="object-cover opacity-90 group-hover:opacity-100 scale-100 group-hover:scale-110 transition-transform duration-700"
             priority
@@ -121,7 +142,7 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
           <div className="flex flex-wrap items-center gap-4 mb-6 self-start">
             <div className="inline-flex items-center gap-2 bg-[#EA580C] text-black px-4 py-1.5 rounded-full shadow-lg">
                <Flame size={14} />
-               <span className="text-[10px] font-black uppercase tracking-widest">Meister Series</span>
+               <span className="text-[10px] font-black uppercase tracking-widest">Grill-Meister Series</span>
             </div>
             <div className="inline-flex items-center gap-2 border border-zinc-400 bg-zinc-300 text-black px-5 py-2 rounded-full shadow-lg">
                <span className="text-sm font-bold uppercase tracking-widest">Stock #: {STOCK_NUMBER}</span>
@@ -129,10 +150,10 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
           </div>
 
           <h1 className="font-oswald text-5xl md:text-7xl font-black text-white uppercase leading-[0.9] mb-6">
-            48″ <br /> <span className="text-zinc-500">Grill-Meister</span>
+            48&quot; <br /> <span className="text-zinc-500">Grill-Meister</span>
           </h1>
           <p className="text-zinc-400 text-lg md:text-xl font-light leading-relaxed mb-8 max-w-xl">
-            The best adjustable charcoal grill on the market. With an expanded 48-inch cooking chamber, double-walled sides, and a massive 1886 square inches of cooking space, you have the ultimate setup for large gatherings or commercial catering.
+            The 48-Inch Grill-Meister is our XL heavy-duty, adjustable charcoal grill built for precision. With its easy-crank grate system, you can sear steaks directly over the coals or raise the food for a slow, gentle cook. Featuring a slide-out ash pan, cleanup is effortless.
           </p>
           <div className="grid grid-cols-2 gap-4 mb-10 border-t border-white/10 pt-8">
             {SPECS.map((spec, idx) => (
@@ -171,35 +192,44 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
                <h3 className="font-oswald text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-8 border-b border-white/10 pb-6">
                  Upgrade <span className="text-zinc-600">Your Pit</span>
                </h3>
+
                <div className="flex flex-col gap-4">
-                 {CUSTOM_OPTIONS.map((option) => {
+                 {CUSTOM_OPTIONS.map((option: any) => {
                    const isSelected = selectedOptions[option.id];
                    return (
                      <button 
                        key={option.id}
-                       onClick={() => toggleOption(option.id)}
+                       onClick={() => toggleOption(option)}
                        className={`group flex items-center justify-between w-full text-left p-6 rounded-2xl border transition-all duration-300 ${
                          isSelected ? "bg-[#EA580C]/10 border-[#EA580C] shadow-[0_0_20px_rgba(234,88,12,0.15)]" : "bg-[#111111] border-white/5 hover:border-white/20 hover:bg-white/[0.02]"
                        }`}
                      >
-                       <div className="flex items-start gap-5">
-                          <div className={`mt-1 flex items-center justify-center w-6 h-6 rounded border transition-colors shrink-0 ${
+                       <div className="flex items-center gap-5 flex-1 pr-6">
+                          <div className={`flex items-center justify-center w-6 h-6 shrink-0 border transition-colors ${
+                            option.group ? 'rounded-full' : 'rounded'
+                          } ${
                             isSelected ? "bg-[#EA580C] border-[#EA580C] text-black" : "border-zinc-600 text-transparent group-hover:border-zinc-400"
                           }`}>
-                            <Check size={14} strokeWidth={3} />
+                            {option.group ? (
+                               <div className={`w-2.5 h-2.5 rounded-full bg-black ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
+                            ) : (
+                               <Check size={14} strokeWidth={3} />
+                            )}
                           </div>
-                          <div className="flex flex-col gap-1">
+                          <div className="flex flex-col justify-center gap-1">
                              <span className={`font-bold uppercase tracking-widest text-sm md:text-base transition-colors ${isSelected ? "text-white" : "text-zinc-300"}`}>
                                {option.label}
                              </span>
-                             <span className="text-xs text-zinc-500 font-light max-w-md line-clamp-2 md:line-clamp-none">
-                               {option.desc}
-                             </span>
+                             {option.desc && (
+                               <span className="text-xs text-zinc-500 font-light leading-relaxed">
+                                 {option.desc}
+                               </span>
+                             )}
                           </div>
                        </div>
                        <div className="shrink-0 flex items-center gap-2">
                           <span className={`font-oswald text-xl tracking-tight transition-colors ${isSelected ? "text-[#EA580C]" : "text-white"}`}>
-                            +${option.price}
+                            {option.requiresQuote ? "Quote" : `+$${option.price}`}
                           </span>
                        </div>
                      </button>
@@ -216,20 +246,22 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
                 <h4 className="text-[#EA580C] font-bold text-[10px] uppercase tracking-[0.3em] mb-6">Build Summary</h4>
                 
                 <div className="flex justify-between items-center mb-4 text-sm text-zinc-300">
-                  <span>Base 48" Grill-Meister</span>
-                  <span className="font-oswald text-lg tracking-wider">${BASE_PRICE.toLocaleString()}</span>
+                  <span>Base 48&quot; Grill-Meister</span>
+                  <span className="font-oswald text-lg tracking-wider shrink-0 ml-4">${BASE_PRICE.toLocaleString()}</span>
                 </div>
 
                 <div className="space-y-3 mb-6 min-h-[50px]">
-                  {CUSTOM_OPTIONS.filter(o => selectedOptions[o.id]).map(opt => (
+                  {CUSTOM_OPTIONS.filter((o: any) => selectedOptions[o.id]).map((opt: any) => (
                      <motion.div 
                        initial={{ opacity: 0, x: 10 }}
                        animate={{ opacity: 1, x: 0 }}
                        key={opt.id} 
-                       className="flex justify-between items-start text-xs text-zinc-500"
+                       className="flex justify-between items-start text-xs text-zinc-500 gap-4"
                      >
-                        <span className="w-2/3 pr-2">+ {opt.label}</span>
-                        <span className="font-oswald tracking-wider text-white">${opt.price.toLocaleString()}</span>
+                        <span className="flex-1">+ {opt.label}</span>
+                        <span className="font-oswald tracking-wider text-white shrink-0">
+                          {opt.requiresQuote ? "Quote" : `+$${opt.price.toLocaleString()}`}
+                        </span>
                      </motion.div>
                   ))}
                   {Object.values(selectedOptions).every(v => !v) && (
@@ -237,11 +269,18 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
                   )}
                 </div>
 
-                <div className="border-t border-white/10 pt-6 mb-8 flex justify-between items-end">
-                   <span className="text-white font-bold uppercase tracking-widest text-xs">Total Estimate</span>
-                   <span className="font-oswald text-5xl font-black text-[#EA580C] tracking-tighter">
-                     ${currentTotal.toLocaleString()}
-                   </span>
+                <div className="border-t border-white/10 pt-6 mb-8 flex flex-col gap-1">
+                   <div className="flex justify-between items-end gap-4">
+                     <span className="text-white font-bold uppercase tracking-widest text-xs flex-1 mb-2">Total Estimate</span>
+                     <span className="font-oswald text-4xl md:text-5xl font-black text-[#EA580C] tracking-tighter shrink-0">
+                       ${currentTotal.toLocaleString()}{hasQuoteOption ? '+' : ''}
+                     </span>
+                   </div>
+                   {hasQuoteOption && (
+                     <p className="text-[#EA580C] text-[10px] text-right uppercase tracking-widest font-bold">
+                       *Pending custom quote adjustments
+                     </p>
+                   )}
                 </div>
 
                 <button 
@@ -268,7 +307,7 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
                <h3 className="font-oswald text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2">
                  The <span className="text-zinc-600">Gallery</span>
                </h3>
-               <p className="text-zinc-500 font-light text-sm">See the 48" Meister in action.</p>
+               <p className="text-zinc-500 font-light text-sm">See the 48&quot; Grill-Meister in action.</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500">
                <Camera size={20} />
@@ -293,7 +332,7 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
                  >
                     <Image 
                       src={imgSrc} 
-                      alt={`48 Grill-Meister Image ${idx + 1}`} 
+                      alt={`48-Inch Grill Gallery Image ${idx + 1}`} 
                       fill 
                       className="object-cover opacity-80 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700" 
                     />
@@ -308,7 +347,6 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
          )}
       </section>
 
-      {/* --- LIGHTBOX MODAL --- */}
       <AnimatePresence>
         {lightboxIndex !== null && galleryImages.length > 0 && (
           <motion.div 
@@ -328,7 +366,6 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
              <button onClick={nextImage} className="absolute right-4 md:right-10 text-white hover:text-[#EA580C] hover:scale-110 transition-all z-50 bg-black/50 p-4 rounded-full border border-white/10 shadow-lg">
                 <ChevronRight size={32} />
              </button>
-
              <motion.div 
                key={lightboxIndex}
                initial={{ opacity: 0, scale: 0.95 }}
@@ -349,7 +386,6 @@ export default function Meister48Client({ galleryImages }: { galleryImages: stri
           </motion.div>
         )}
       </AnimatePresence>
-
     </main>
   );
 }

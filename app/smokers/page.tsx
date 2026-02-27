@@ -1,108 +1,70 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { Flame, ChevronRight } from "lucide-react";
+import { createClient } from "next-sanity";
 
-// --- SMOKERS INVENTORY DATA ---
-const SNIPER_SERIES = [
-  {
-    id: "short-sniper",
-    name: "Short Sniper",
-    stock: "PM-SHORT-SNIPER",
-    price: "$3,995",
-    img: "/images/smoker_short_sniper.webp",
-    desc: "Traditional 48\" offset stick burner designed for precision draft control."
-  },
-  {
-    id: "long-rifle-sniper",
-    name: "Long Rifle Sniper",
-    stock: "PM-LONG-RIFLE",
-    price: "$4,495",
-    img: "/images/smoker_long_rifle_sniper.webp",
-    desc: "Extended 58\" offset smoker for maximum cooking surface and airflow."
-  },
-  {
-    id: "magnum-sniper",
-    name: "Magnum Sniper",
-    stock: "PM-MAGNUM-SNIPER",
-    price: "$5,795",
-    img: "/images/smoker_magnum_sniper.webp",
-    desc: "The ultimate massive offset with an insulated firebox for supreme efficiency."
-  }
+// Initialize the Sanity Client
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "fallback",
+  dataset: "production",
+  apiVersion: "2024-01-01",
+  useCdn: false, // Ensures you get fresh data immediately
+});
+
+// --- BASE INVENTORY DATA (We will overwrite prices with Live Sanity data below) ---
+const INITIAL_SNIPER_SERIES = [
+  { id: "short-sniper", name: "Short Sniper", sanityName: "Short Sniper", stock: "PM-SHORT-SNIPER", price: 3995, img: "/images/smoker_short_sniper.webp", desc: "Traditional 48\" offset stick burner designed for precision draft control." },
+  { id: "long-rifle-sniper", name: "Long Rifle Sniper", sanityName: "Long Rifle Sniper", stock: "PM-LONG-RIFLE", price: 4495, img: "/images/smoker_long_rifle_sniper.webp", desc: "Extended 58\" offset smoker for maximum cooking surface and airflow." },
+  { id: "magnum-sniper", name: "Magnum Sniper", sanityName: "Magnum Sniper", stock: "PM-MAGNUM-SNIPER", price: 5795, img: "/images/smoker_magnum_sniper.webp", desc: "The ultimate massive offset with an insulated firebox for supreme efficiency." }
 ];
 
-const SAFE_SERIES = [
-  {
-    id: "safe-w-wheels",
-    name: "Safe w/ Wheels",
-    stock: "PM-SAFE-WHEELS",
-    price: "$3,500",
-    img: "/images/smokers_safe_w_wheels.webp",
-    desc: "Heavy-duty double-walled insulated vertical smoker on mobile casters."
-  },
-  {
-    id: "safe-w-cart",
-    name: "Safe w/ Cart",
-    stock: "PM-SAFE-CART",
-    price: "$3,900",
-    img: "/images/smoker_safe_w_cart.webp",
-    desc: "The iconic BBQ Safe mounted on a robust prep cart for easy transport."
-  },
-  {
-    id: "safe-grill-meister-combo",
-    name: "Safe/Grill-Meister Combo",
-    stock: "PM-SAFE-GM-COMBO",
-    price: "$5,995",
-    img: "/images/smoker_safe_grill.webp",
-    desc: "The ultimate backyard rig combining our BBQ Safe and Grill-Meister."
-  }
+const INITIAL_SAFE_SERIES = [
+  { id: "safe-w-wheels", name: "Safe w/ Wheels", sanityName: "Safe w/ Wheels", stock: "PM-SAFE-WHEELS", price: 3500, img: "/images/smokers_safe_w_wheels.webp", desc: "Heavy-duty double-walled insulated vertical smoker on mobile casters." },
+  { id: "safe-w-cart", name: "Safe w/ Cart", sanityName: "BBQ Safe w/ Cart", stock: "PM-SAFE-CART", price: 3900, img: "/images/smoker_safe_w_cart.webp", desc: "The iconic BBQ Safe mounted on a robust prep cart for easy transport." },
+  { id: "safe-grill-meister-combo", name: "Safe/Grill-Meister Combo", sanityName: "Safe/Grill-Meister Combo", stock: "PM-SAFE-GM-COMBO", price: 5995, img: "/images/smoker_safe_grill.webp", desc: "The ultimate backyard rig combining our BBQ Safe and Grill-Meister." }
 ];
 
-const CORE_MODELS = [
-  {
-    id: "vault-smoker",
-    name: "Vault",
-    stock: "PM-VAULT",
-    price: "$4,495",
-    img: "/images/smoker_vault.webp",
-    desc: "Our flagship massive insulated vertical smoker. Zero smoke leaks, pure efficiency."
-  },
-  {
-    id: "revolver",
-    name: "Revolver",
-    stock: "PM-REVOLVER",
-    price: "$2,395",
-    img: "/images/smoker_revolver.webp",
-    desc: "Heavy-duty offset drum smoker with incredible temperature stability."
-  },
-  {
-    id: "hitman",
-    name: "Hitman",
-    stock: "PM-HITMAN",
-    price: "$3,395",
-    img: "/images/smoker_hitman.webp",
-    desc: "Compact and deadly standard flow offset smoker for the purist."
-  },
-  {
-    id: "edge",
-    name: "Edge",
-    stock: "PM-EDGE",
-    price: "$5,795",
-    img: "/images/smoker_edge.webp",
-    desc: "Sleek and modern rectangular insulated vertical smoker."
-  },
-  {
-    id: "pm-ar-20-pellet",
-    name: "PM AR-20 Pellet",
-    stock: "PM-AR20-PELLET",
-    price: "$2,395",
-    img: "/images/smoker_pellet.webp",
-    desc: "Set-and-forget pellet convenience built with Pitmaker's legendary steel."
-  }
+const INITIAL_CORE_MODELS = [
+  { id: "vault-smoker", name: "Vault", sanityName: "Vault Smoker", stock: "PM-VAULT", price: 4495, img: "/images/smoker_vault.webp", desc: "Our flagship massive insulated vertical smoker. Zero smoke leaks, pure efficiency." },
+  { id: "revolver", name: "Revolver", sanityName: "Revolver Smoker", stock: "PM-REVOLVER", price: 2395, img: "/images/smoker_revolver.webp", desc: "Heavy-duty offset drum smoker with incredible temperature stability." },
+  { id: "hitman", name: "Hitman", sanityName: "Hitman Smoker", stock: "PM-HITMAN", price: 3395, img: "/images/smoker_hitman.webp", desc: "Compact and deadly standard flow offset smoker for the purist." },
+  { id: "edge", name: "Edge", sanityName: "Edge Smoker", stock: "PM-EDGE", price: 5795, img: "/images/smoker_edge.webp", desc: "Sleek and modern rectangular insulated vertical smoker." },
+  { id: "pm-ar-20-pellet", name: "PM AR-20 Pellet", sanityName: "PM AR-20 Pellet", stock: "PM-AR20-PELLET", price: 2395, img: "/images/smoker_pellet.webp", desc: "Set-and-forget pellet convenience built with Pitmaker's legendary steel." }
 ];
 
-export default function SmokersCollectionPage() {
+// This makes the page dynamically fetch fresh data every time someone visits
+export const revalidate = 0; 
+
+export default async function SmokersCollectionPage() {
+  
+  // 1. Fetch ALL products from Sanity at once
+  let sanityProducts: any[] = [];
+  try {
+    if (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+      sanityProducts = await client.fetch(`*[_type == "product"]{ modelName, basePrice }`);
+    }
+  } catch (error) {
+    console.log("Could not fetch Sanity products on Category page.");
+  }
+
+  // Helper function to update prices based on Sanity data
+  const updatePrices = (items: any[]) => {
+    return items.map(item => {
+      // Look for a matching name in the database
+      const dbMatch = sanityProducts.find(dbItem => dbItem.modelName === item.sanityName);
+      return {
+        ...item,
+        // If found in Sanity, use the Sanity price. Otherwise, use the fallback price.
+        price: dbMatch && dbMatch.basePrice ? dbMatch.basePrice : item.price 
+      };
+    });
+  };
+
+  // 2. Map over our initial arrays and replace prices with live Sanity data
+  const SNIPER_SERIES = updatePrices(INITIAL_SNIPER_SERIES);
+  const SAFE_SERIES = updatePrices(INITIAL_SAFE_SERIES);
+  const CORE_MODELS = updatePrices(INITIAL_CORE_MODELS);
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white pt-56 pb-32 selection:bg-[#EA580C]">
       
@@ -203,7 +165,8 @@ function SmokerCard({ smoker }: { smoker: any }) {
         <div className="flex items-center justify-between pt-6 border-t border-white/5">
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">Starting at</span>
-            <span className="font-oswald text-xl font-bold text-white tracking-tight">{smoker.price}</span>
+            {/* THIS RENDERS THE LIVE NUMBER DYNAMICALLY AS DOLLARS */}
+            <span className="font-oswald text-xl font-bold text-white tracking-tight">${smoker.price.toLocaleString()}</span>
           </div>
           
           <Link 

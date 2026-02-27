@@ -1,49 +1,91 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { Warehouse, ChevronRight } from "lucide-react";
+import { createClient } from "next-sanity";
 
-// --- GRILLS INVENTORY DATA ---
-const MEISTER_SERIES = [
+// Initialize the Sanity Client
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "fallback",
+  dataset: "production",
+  apiVersion: "2024-01-01",
+  useCdn: false, // Ensures you get fresh data immediately
+});
+
+// --- BASE INVENTORY DATA (We will overwrite prices with Live Sanity data below) ---
+const INITIAL_MEISTER_SERIES = [
   {
     id: "30-adjustable-charcoal-grill",
     name: "30\" Grill-Meister",
+    sanityName: "30-Inch Grill-Meister",
     stock: "PM-30-MEISTER",
-    price: "$2,695",
+    price: 2695,
     img: "/images/grill_30_grill_meister.webp",
     desc: "Heavy-duty adjustable charcoal grill built for precision searing and rugged durability."
   },
   {
     id: "grill-meister-adjustable-charcoal-grill",
     name: "48\" Grill-Meister",
+    sanityName: "48-Inch Grill-Meister",
     stock: "PM-48-MEISTER",
-    price: "$3,295",
+    price: 3295,
     img: "/images/grill_48_grill_meister.webp",
     desc: "Extra-large heavy-duty adjustable charcoal grill for massive backyard or catering capacity."
   }
 ];
 
-const PERFORMANCE_SERIES = [
+const INITIAL_PERFORMANCE_SERIES = [
   {
     id: "mvp-tailgate-grill",
     name: "MVP Tailgate Grill",
+    sanityName: "MVP Tailgate Grill",
     stock: "PM-MVP2024",
-    price: "$1,095",
+    price: 1095,
     img: "/images/grill_mvp_tailgate.webp",
     desc: "Standard 24\" x 20\" carbon steel Tailgater grill designed for ultimate mobility and flavor."
   },
   {
     id: "carbon-q",
     name: "Carbon-Q",
+    sanityName: "Carbon-Q",
     stock: "PM-CQ-30",
-    price: "$2,895",
+    price: 2895,
     img: "/images/grill_carbon_q.webp",
     desc: "High-performance charcoal grilling system focused on pure heat transfer and airflow."
   }
 ];
 
-export default function GrillsCollectionPage() {
+// This makes the page dynamically fetch fresh data every time someone visits
+export const revalidate = 0; 
+
+export default async function GrillsCollectionPage() {
+  
+  // 1. Fetch ALL products from Sanity at once
+  let sanityProducts: any[] = [];
+  try {
+    if (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+      sanityProducts = await client.fetch(`*[_type == "product"]{ modelName, basePrice }`);
+    }
+  } catch (error) {
+    console.log("Could not fetch Sanity products on Grills Category page.");
+  }
+
+  // Helper function to update prices based on Sanity data
+  const updatePrices = (items: any[]) => {
+    return items.map(item => {
+      // Look for a matching name in the database
+      const dbMatch = sanityProducts.find(dbItem => dbItem.modelName === item.sanityName);
+      return {
+        ...item,
+        // If found in Sanity, use the Sanity price. Otherwise, use the fallback price.
+        price: dbMatch && dbMatch.basePrice ? dbMatch.basePrice : item.price 
+      };
+    });
+  };
+
+  // 2. Map over our initial arrays and replace prices with live Sanity data
+  const MEISTER_SERIES = updatePrices(INITIAL_MEISTER_SERIES);
+  const PERFORMANCE_SERIES = updatePrices(INITIAL_PERFORMANCE_SERIES);
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white pt-56 pb-32 selection:bg-[#EA580C]">
       
@@ -131,7 +173,8 @@ function GrillCard({ grill }: { grill: any }) {
         <div className="flex items-center justify-between pt-6 border-t border-white/5">
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">Starting at</span>
-            <span className="font-oswald text-xl font-bold text-white tracking-tight">{grill.price}</span>
+            {/* THIS RENDERS THE LIVE NUMBER DYNAMICALLY AS DOLLARS */}
+            <span className="font-oswald text-xl font-bold text-white tracking-tight">${grill.price.toLocaleString()}</span>
           </div>
           
           <Link 

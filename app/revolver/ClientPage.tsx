@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 
 // --- REVOLVER SMOKER DATA ---
-const BASE_PRICE = 2395;
 const STOCK_NUMBER = "PM-Revolver-20x32"; 
 
 const SPECS = [
@@ -31,31 +30,60 @@ const STANDARD_FEATURES = [
   "4 Heavy Duty Casters with Lubricating Points for Easy Moving."
 ];
 
-const CUSTOM_OPTIONS = [
-  { id: "stainless-shelf", label: "Stainless Steel Front Shelf", price: 200, icon: Hammer, desc: "Upgrade the standard expanded metal front shelf to solid stainless steel." },
-  { id: "ball-valve", label: "Ball Valve Drain", price: 30, icon: Droplet, desc: "Add a precision ball valve for easy grease and water draining." }
-];
-
-export default function RevolverClient({ galleryImages }: { galleryImages: string[] }) {
+export default function RevolverClient({ galleryImages, cmsData }: { galleryImages: string[], cmsData: any }) {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>({});
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const toggleOption = (id: string) => {
+  const BASE_PRICE = cmsData?.basePrice || 2395;
+  const rawOptions = cmsData?.options || [];
+  
+  const CUSTOM_OPTIONS = rawOptions.map((opt: any, index: number) => {
+    const icons = [Hammer, Droplet, ShieldCheck, Settings];
+    return {
+      id: `opt-${index}`,
+      label: opt.label,
+      price: opt.price || 0,
+      desc: opt.desc || "", 
+      group: opt.group || null, 
+      requiresQuote: opt.requiresQuote || false,
+      icon: icons[index % icons.length]
+    };
+  });
+
+  const toggleOption = (option: any) => {
     setSelectedOptions(prev => {
-      const next = { ...prev, [id]: !prev[id] };
+      const isSelected = prev[option.id];
+      const next = { ...prev };
+
+      if (isSelected) {
+        next[option.id] = false;
+      } else {
+        next[option.id] = true;
+        
+        // Group Logic for mutually exclusive options
+        if (option.group) {
+          CUSTOM_OPTIONS.forEach((opt: any) => {
+            if (opt.group === option.group && opt.id !== option.id) {
+              next[opt.id] = false;
+            }
+          });
+        }
+      }
       return next;
     });
   };
 
-  const currentTotal = BASE_PRICE + CUSTOM_OPTIONS.reduce((total, opt) => {
+  const currentTotal = BASE_PRICE + CUSTOM_OPTIONS.reduce((total: number, opt: any) => {
     return selectedOptions[opt.id] ? total + opt.price : total;
   }, 0);
 
+  const hasQuoteOption = CUSTOM_OPTIONS.some((o: any) => selectedOptions[o.id] && o.requiresQuote);
+
   const handleAddToQuote = () => {
-    const activeOptions = CUSTOM_OPTIONS.filter(o => selectedOptions[o.id]).map(o => ({
+    const activeOptions = CUSTOM_OPTIONS.filter((o: any) => selectedOptions[o.id]).map((o: any) => ({
       label: o.label,
-      price: o.price
+      price: o.requiresQuote ? "Quote" : o.price
     }));
     
     const newItem = {
@@ -183,34 +211,42 @@ export default function RevolverClient({ galleryImages }: { galleryImages: strin
                </h3>
 
                <div className="flex flex-col gap-4">
-                 {CUSTOM_OPTIONS.map((option) => {
+                 {CUSTOM_OPTIONS.map((option: any) => {
                    const isSelected = selectedOptions[option.id];
                    return (
                      <button 
                        key={option.id}
-                       onClick={() => toggleOption(option.id)}
+                       onClick={() => toggleOption(option)}
                        className={`group flex items-center justify-between w-full text-left p-6 rounded-2xl border transition-all duration-300 ${
                          isSelected ? "bg-[#EA580C]/10 border-[#EA580C] shadow-[0_0_20px_rgba(234,88,12,0.15)]" : "bg-[#111111] border-white/5 hover:border-white/20 hover:bg-white/[0.02]"
                        }`}
                      >
-                       <div className="flex items-start gap-5">
-                          <div className={`mt-1 flex items-center justify-center w-6 h-6 rounded border transition-colors shrink-0 ${
+                       <div className="flex items-center gap-5 flex-1 pr-6">
+                          <div className={`flex items-center justify-center w-6 h-6 shrink-0 border transition-colors ${
+                            option.group ? 'rounded-full' : 'rounded'
+                          } ${
                             isSelected ? "bg-[#EA580C] border-[#EA580C] text-black" : "border-zinc-600 text-transparent group-hover:border-zinc-400"
                           }`}>
-                            <Check size={14} strokeWidth={3} />
+                            {option.group ? (
+                               <div className={`w-2.5 h-2.5 rounded-full bg-black ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
+                            ) : (
+                               <Check size={14} strokeWidth={3} />
+                            )}
                           </div>
-                          <div className="flex flex-col gap-1">
+                          <div className="flex flex-col justify-center gap-1">
                              <span className={`font-bold uppercase tracking-widest text-sm md:text-base transition-colors ${isSelected ? "text-white" : "text-zinc-300"}`}>
                                {option.label}
                              </span>
-                             <span className="text-xs text-zinc-500 font-light max-w-md line-clamp-2 md:line-clamp-none">
-                               {option.desc}
-                             </span>
+                             {option.desc && (
+                               <span className="text-xs text-zinc-500 font-light leading-relaxed">
+                                 {option.desc}
+                               </span>
+                             )}
                           </div>
                        </div>
                        <div className="shrink-0 flex items-center gap-2">
                           <span className={`font-oswald text-xl tracking-tight transition-colors ${isSelected ? "text-[#EA580C]" : "text-white"}`}>
-                            +${option.price}
+                            {option.requiresQuote ? "Quote" : `+$${option.price}`}
                           </span>
                        </div>
                      </button>
@@ -228,19 +264,21 @@ export default function RevolverClient({ galleryImages }: { galleryImages: strin
                 
                 <div className="flex justify-between items-center mb-4 text-sm text-zinc-300">
                   <span>Base Revolver Smoker</span>
-                  <span className="font-oswald text-lg tracking-wider">${BASE_PRICE.toLocaleString()}</span>
+                  <span className="font-oswald text-lg tracking-wider shrink-0 ml-4">${BASE_PRICE.toLocaleString()}</span>
                 </div>
 
                 <div className="space-y-3 mb-6 min-h-[50px]">
-                  {CUSTOM_OPTIONS.filter(o => selectedOptions[o.id]).map(opt => (
+                  {CUSTOM_OPTIONS.filter((o: any) => selectedOptions[o.id]).map((opt: any) => (
                      <motion.div 
                        initial={{ opacity: 0, x: 10 }}
                        animate={{ opacity: 1, x: 0 }}
                        key={opt.id} 
-                       className="flex justify-between items-start text-xs text-zinc-500"
+                       className="flex justify-between items-start text-xs text-zinc-500 gap-4"
                      >
-                        <span className="w-2/3 pr-2">+ {opt.label}</span>
-                        <span className="font-oswald tracking-wider text-white">${opt.price.toLocaleString()}</span>
+                        <span className="flex-1">+ {opt.label}</span>
+                        <span className="font-oswald tracking-wider text-white shrink-0">
+                          {opt.requiresQuote ? "Quote" : `+$${opt.price.toLocaleString()}`}
+                        </span>
                      </motion.div>
                   ))}
                   
@@ -249,11 +287,18 @@ export default function RevolverClient({ galleryImages }: { galleryImages: strin
                   )}
                 </div>
 
-                <div className="border-t border-white/10 pt-6 mb-8 flex justify-between items-end">
-                   <span className="text-white font-bold uppercase tracking-widest text-xs">Total Estimate</span>
-                   <span className="font-oswald text-5xl font-black text-[#EA580C] tracking-tighter">
-                     ${currentTotal.toLocaleString()}
-                   </span>
+                <div className="border-t border-white/10 pt-6 mb-8 flex flex-col gap-1">
+                   <div className="flex justify-between items-end gap-4">
+                     <span className="text-white font-bold uppercase tracking-widest text-xs flex-1 mb-2">Total Estimate</span>
+                     <span className="font-oswald text-4xl md:text-5xl font-black text-[#EA580C] tracking-tighter shrink-0">
+                       ${currentTotal.toLocaleString()}{hasQuoteOption ? '+' : ''}
+                     </span>
+                   </div>
+                   {hasQuoteOption && (
+                     <p className="text-[#EA580C] text-[10px] text-right uppercase tracking-widest font-bold">
+                       *Pending custom quote adjustments
+                     </p>
+                   )}
                 </div>
 
                 <button 
@@ -330,7 +375,7 @@ export default function RevolverClient({ galleryImages }: { galleryImages: strin
             exit={{ opacity: 0 }}
             onClick={closeLightbox}
             className="fixed inset-0 w-screen h-screen z-[9999] flex items-center justify-center p-4 md:p-12"
-            style={{ backgroundColor: "#2A2C2C" }} /* SPECIFIC HEX COLOR BACKGROUND */
+            style={{ backgroundColor: "#2A2C2C" }} 
           >
              <button onClick={closeLightbox} className="absolute top-6 right-6 md:top-10 md:right-10 text-white hover:text-[#EA580C] transition-colors z-50 bg-black/50 p-3 rounded-full border border-white/10 shadow-lg">
                 <X size={24} />
@@ -351,7 +396,7 @@ export default function RevolverClient({ galleryImages }: { galleryImages: strin
                exit={{ opacity: 0, scale: 0.95 }}
                transition={{ duration: 0.3 }}
                className="relative w-full h-full max-w-6xl max-h-[80vh] flex items-center justify-center"
-               style={{ filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.9))" }} /* BULLETPROOF DROP SHADOW */
+               style={{ filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.9))" }} 
                onClick={(e) => e.stopPropagation()}
              >
                 <Image 

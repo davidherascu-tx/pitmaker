@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation"; // <--- THIS IS THE FIX
 import { ChevronDown, Flame, Truck, Warehouse, Menu, X, ArrowRight, Phone, Info, ShoppingBag, ExternalLink } from "lucide-react";
 
 // --- Types ---
@@ -38,7 +39,7 @@ const NAV_DATA: NavItemData[] = [
   {
     id: "trailers",
     label: "Trailers",
-    href: "/trailers",           // ADDED: Direct link to Trailers page
+    href: "/trailers",
     type: "mega",
     icon: Truck,
     description: "Custom built mobile pits ranging from single axle to massive commercial rigs.",
@@ -69,7 +70,7 @@ const NAV_DATA: NavItemData[] = [
   {
     id: "smokers",
     label: "Smokers",
-    href: "/smokers",            // ADDED: Direct link to Smokers page
+    href: "/smokers",
     type: "mega",
     icon: Flame,
     description: "The ultimate arsenal of handcrafted insulated smokers.",
@@ -96,11 +97,11 @@ const NAV_DATA: NavItemData[] = [
       {
         title: "Core Models",
         items: [
-          { name: "Vault", href: "/vault", badge: "Iconic", image: "/images/smoker_vault.webp" },
+          { name: "Vault", href: "/vault-smoker", badge: "Iconic", image: "/images/smoker_vault.webp" },
           { name: "Revolver", href: "/revolver", image: "/images/smoker_revolver.webp" },
           { name: "Hitman", href: "/hitman", image: "/images/smoker_hitman.webp" },
           { name: "Edge", href: "/edge", image: "/images/smoker_edge.webp" },
-          { name: "PM AR-20 Pellet", href: "/pellet", image: "/images/smoker_pellet.webp" },
+          { name: "PM AR-20 Pellet", href: "/pm-ar-20-pellet", image: "/images/smoker_pellet.webp" },
         ]
       }
     ]
@@ -108,7 +109,7 @@ const NAV_DATA: NavItemData[] = [
   {
     id: "grills",
     label: "Grills",
-    href: "/grills",             // ADDED: Direct link to Grills page
+    href: "/grills",
     type: "mega",
     icon: Warehouse,
     description: "Heavy-duty charcoal grilling systems for the perfect sear.",
@@ -134,7 +135,7 @@ const NAV_DATA: NavItemData[] = [
   },
   {
     id: "more",
-    label: "More",               // Note: 'More' stays a dropdown button without a direct link
+    label: "More",
     type: "dropdown",
     sections: [
       {
@@ -150,6 +151,8 @@ const NAV_DATA: NavItemData[] = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+  
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [hoveredProductImage, setHoveredProductImage] = useState<string | null>(null);
   const [hoveredTitle, setHoveredTitle] = useState<string | null>(null);
@@ -159,7 +162,6 @@ export default function Navbar() {
   const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   
-  // --- Scroll Visibility State ---
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -188,6 +190,9 @@ export default function Navbar() {
       setHoveredSection(null);
     }
   }, [activeMenu]);
+
+  // If we are on the admin page, do not render the navbar!
+  if (pathname?.startsWith("/admin")) return null;
 
   const activeData = NAV_DATA.find((item) => item.id === activeMenu);
   const currentImage = hoveredProductImage || activeData?.defaultImage;
