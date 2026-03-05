@@ -240,18 +240,19 @@ export default function Navbar() {
             } 
         `}>
           
-          {/* --- LOGO --- */}
-          <Link href="/" className={`relative z-50 flex-shrink-0 group transition-all duration-[800ms] ${scrolled ? 'w-36 h-9' : 'w-48 h-12'}`}>
-            <div className="relative w-full h-full">
-                <Image 
-                    src="/pitmaker_black_logo.webp" 
-                    alt="Pitmaker" 
-                    fill
-                    priority // <--- FIXED: Added priority to stop lazy loading
-                    className="object-contain brightness-0 invert drop-shadow-md"
-                />
-            </div>
-          </Link>
+{/* --- LOGO --- */}
+<Link href="/" className={`relative z-50 flex-shrink-0 group transition-all duration-[800ms] ${scrolled ? 'w-36 h-9' : 'w-48 h-12'}`}>
+  <div className="relative w-full h-full">
+      <Image 
+          src="/pitmaker_black_logo.webp" 
+          alt="Pitmaker" 
+          fill
+          priority
+          fetchPriority="high" // <--- ADD THIS LINE
+          className="object-contain brightness-0 invert drop-shadow-md"
+      />
+  </div>
+</Link>
 
           {/* --- DESKTOP NAV LINKS --- */}
           <div className={`hidden xl:flex items-center gap-1 h-12 px-2 rounded-full transition-all duration-[800ms]
@@ -476,16 +477,17 @@ export default function Navbar() {
         ${isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}
         `}
       >
-           <div className="sticky top-0 w-full flex justify-between items-center p-6 border-b border-zinc-900 bg-zinc-950 z-50">
-              <div className="relative w-48 h-12">
-                 <Image 
-                    src="/pitmaker_black_logo.webp" 
-                    alt="Pitmaker" 
-                    fill
-                    priority // <--- FIXED: Added priority here as well for mobile
-                    className="object-contain brightness-0 invert"
-                 />
-              </div>
+<div className="sticky top-0 w-full flex justify-between items-center p-6 border-b border-zinc-900 bg-zinc-950 z-50">
+   <div className="relative w-48 h-12">
+      <Image 
+         src="/pitmaker_black_logo.webp" 
+         alt="Pitmaker" 
+         fill
+         priority
+         fetchPriority="high" // <--- ADD THIS LINE
+         className="object-contain brightness-0 invert"
+      />
+   </div>
               <button onClick={() => setIsMobileOpen(false)} className="text-zinc-500 hover:text-white p-2 border border-zinc-800 rounded-lg">
                  <X size={28} />
               </button>
