@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation"; // <--- THIS IS THE FIX
+import { usePathname } from "next/navigation"; 
 import { ChevronDown, Flame, Truck, Warehouse, Menu, X, ArrowRight, Phone, Info, ShoppingBag, ExternalLink } from "lucide-react";
 
 // --- Types ---
@@ -247,6 +247,7 @@ export default function Navbar() {
                     src="/pitmaker_black_logo.webp" 
                     alt="Pitmaker" 
                     fill
+                    priority // <--- FIXED: Added priority to stop lazy loading
                     className="object-contain brightness-0 invert drop-shadow-md"
                 />
             </div>
@@ -481,6 +482,7 @@ export default function Navbar() {
                     src="/pitmaker_black_logo.webp" 
                     alt="Pitmaker" 
                     fill
+                    priority // <--- FIXED: Added priority here as well for mobile
                     className="object-contain brightness-0 invert"
                  />
               </div>
