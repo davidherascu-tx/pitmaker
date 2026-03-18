@@ -137,7 +137,7 @@ export async function POST(request: Request) {
     // Build the payload dynamically
     const emailPayload: any = {
       from: 'PITMAKER Website <onboarding@resend.dev>', // Keep as onboarding until domain is verified
-      to: 'david.herascu@gmail.com', // <--- REPLACE THIS
+      to: 'david.herescu@gmail.com', // <--- REPLACE THIS
       replyTo: email || 'noreply@pitmaker.com',
       subject: `Contact From / Quote: ${firstName} ${lastName}`,
       html: htmlContent,
