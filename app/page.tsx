@@ -173,6 +173,7 @@ export default function Home() {
                     src={item.img} 
                     alt={item.title} 
                     fill 
+                    sizes="(max-width: 768px) 100vw, 33vw" // <-- ADDED SIZES PROP
                     className="object-cover opacity-80 transition-transform duration-1000 group-hover:scale-110 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -202,7 +203,8 @@ export default function Home() {
       </section>
 
       {/* --- 3. THE "PURE GLASS" STORE SECTION --- */}
-      <section ref={storeRef} className="py-48 px-6 bg-black relative overflow-hidden" style={{ perspective: "1000px" }}>
+      {/* ADDED 'position: relative' to style to fix Framer Motion Warning */}
+      <section ref={storeRef} className="py-48 px-6 bg-black relative overflow-hidden" style={{ position: "relative", perspective: "1000px" }}>
         
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
           <motion.h2 
@@ -233,7 +235,6 @@ export default function Home() {
                   <span className="text-[10px] font-black uppercase tracking-widest">Shop Official</span>
                 </div>
                 
-                {/* UPDATED: text-3xl sm:text-5xl md:text-8xl for mobile sizing */}
                 <motion.h2 
                   variants={staggerTextContainer}
                   initial="hidden"

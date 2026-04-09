@@ -157,6 +157,7 @@ export default function Navbar() {
   const [hoveredProductImage, setHoveredProductImage] = useState<string | null>(null);
   const [hoveredTitle, setHoveredTitle] = useState<string | null>(null);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
@@ -188,6 +189,7 @@ export default function Navbar() {
       setHoveredProductImage(null);
       setHoveredTitle(null);
       setHoveredSection(null);
+      setHoveredHref(null);
     }
   }, [activeMenu]);
 
@@ -200,6 +202,9 @@ export default function Navbar() {
   const currentBadge = hoveredSection && activeData 
     ? `${activeData.label} / ${hoveredSection}` 
     : activeData?.categoryBadge || "Pitmaker Certified";
+    
+  // Dynamic Link Setup
+  const currentLink = hoveredHref || activeData?.href || "#";
 
   const toggleMobileAccordion = (id: string) => {
     setExpandedMobileItem(expandedMobileItem === id ? null : id);
@@ -240,19 +245,20 @@ export default function Navbar() {
             } 
         `}>
           
-{/* --- LOGO --- */}
-<Link href="/" className={`relative z-50 flex-shrink-0 group transition-all duration-[800ms] ${scrolled ? 'w-36 h-9' : 'w-48 h-12'}`}>
-  <div className="relative w-full h-full">
-      <Image 
-          src="/pitmaker_black_logo.webp" 
-          alt="Pitmaker" 
-          fill
-          priority
-          fetchPriority="high" // <--- ADD THIS LINE
-          className="object-contain brightness-0 invert drop-shadow-md"
-      />
-  </div>
-</Link>
+          {/* --- LOGO --- */}
+          <Link href="/" className={`relative z-50 flex-shrink-0 group transition-all duration-[800ms] ${scrolled ? 'w-36 h-9' : 'w-48 h-12'}`}>
+            <div className="relative w-full h-full">
+                <Image 
+                    src="/pitmaker_black_logo.webp" 
+                    alt="Pitmaker" 
+                    fill
+                    priority
+                    fetchPriority="high"
+                    sizes="200px" // Fix for console warning
+                    className="object-contain brightness-0 invert drop-shadow-md"
+                />
+            </div>
+          </Link>
 
           {/* --- DESKTOP NAV LINKS --- */}
           <div className={`hidden xl:flex items-center gap-1 h-12 px-2 rounded-full transition-all duration-[800ms]
@@ -408,11 +414,13 @@ export default function Navbar() {
                                      setHoveredProductImage(item.image || null);
                                      setHoveredTitle(item.name);
                                      setHoveredSection(section.title);
+                                     setHoveredHref(item.href);
                                    }}
                                    onMouseLeave={() => {
                                      setHoveredProductImage(null);
                                      setHoveredTitle(null);
                                      setHoveredSection(null);
+                                     setHoveredHref(null);
                                    }}
                                    className="group flex items-center justify-between hover:translate-x-1 transition-transform border-l border-transparent hover:border-[#EA580C] pl-0 hover:pl-3"
                                  >
@@ -441,6 +449,7 @@ export default function Navbar() {
                              src={currentImage} 
                              alt="Preview" 
                              fill 
+                             sizes="(max-width: 1280px) 100vw, 40vw" // Fix for console warning
                              className="object-cover" 
                           />
                        </div>
@@ -459,7 +468,7 @@ export default function Navbar() {
                          {currentTitle}
                        </h2>
                        
-                       <Link href="/gallery" className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-1.5">
+                       <Link href={currentLink} className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-1.5">
                           View Full Specs <ArrowRight className="w-3 h-3" />
                        </Link>
                     </div>
@@ -477,17 +486,18 @@ export default function Navbar() {
         ${isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}
         `}
       >
-<div className="sticky top-0 w-full flex justify-between items-center p-6 border-b border-zinc-900 bg-zinc-950 z-50">
-   <div className="relative w-48 h-12">
-      <Image 
-         src="/pitmaker_black_logo.webp" 
-         alt="Pitmaker" 
-         fill
-         priority
-         fetchPriority="high" // <--- ADD THIS LINE
-         className="object-contain brightness-0 invert"
-      />
-   </div>
+           <div className="sticky top-0 w-full flex justify-between items-center p-6 border-b border-zinc-900 bg-zinc-950 z-50">
+              <div className="relative w-48 h-12">
+                 <Image 
+                    src="/pitmaker_black_logo.webp" 
+                    alt="Pitmaker" 
+                    fill
+                    priority
+                    fetchPriority="high"
+                    sizes="200px" // Fix for console warning
+                    className="object-contain brightness-0 invert"
+                 />
+              </div>
               <button onClick={() => setIsMobileOpen(false)} className="text-zinc-500 hover:text-white p-2 border border-zinc-800 rounded-lg">
                  <X size={28} />
               </button>

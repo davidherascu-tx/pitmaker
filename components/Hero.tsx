@@ -125,6 +125,7 @@ export default function Hero() {
                  src={slide.image} 
                  alt={slide.title} 
                  fill 
+                 sizes="100vw" // <-- ADDED SIZES PROP
                  className={`object-cover transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isActive ? "scale-100 opacity-100" : "scale-110 opacity-0"}`} 
                  priority={index === 0} 
                />
@@ -203,14 +204,14 @@ export default function Hero() {
         <div className="flex items-center gap-2 md:gap-4">
           <button 
             onClick={handleManualPrev} 
-            aria-label="Previous slide" // FIX: Added discernible name
+            aria-label="Previous slide" 
             className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white hover:text-black transition-all active:scale-95"
           >
             <ChevronLeft size={20} className="md:w-6 md:h-6" aria-hidden="true" />
           </button>
           <button 
             onClick={handleManualNext} 
-            aria-label="Next slide" // FIX: Added discernible name
+            aria-label="Next slide" 
             className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center group active:scale-95 transition-transform"
           >
             <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 80 80" aria-hidden="true">

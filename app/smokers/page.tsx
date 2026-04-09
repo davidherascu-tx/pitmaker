@@ -143,6 +143,7 @@ function SmokerCard({ smoker }: { smoker: any }) {
           src={smoker.img} 
           alt={smoker.name} 
           fill 
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // <-- ADDED SIZES PROP HERE
           className="object-cover opacity-80 transition-transform duration-1000 group-hover:scale-110 group-hover:opacity-100"
         />
       </div>

@@ -188,6 +188,7 @@ function TrailerCard({ trailer }: { trailer: any }) {
           src={trailer.img} 
           alt={trailer.name} 
           fill 
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw" // <-- ADDED SIZES PROP HERE
           className="object-cover opacity-80 transition-transform duration-1000 group-hover:scale-110 group-hover:opacity-100"
         />
       </div>
